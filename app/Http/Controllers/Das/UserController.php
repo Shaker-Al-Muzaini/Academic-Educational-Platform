@@ -4,20 +4,30 @@ namespace App\Http\Controllers\Das;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Http\Request;
 
 
 class UserController extends Controller
 {
-    public function  index(){
-        return User::latest()->get();
+    public function index()
+    {
+        $users = User::query()
+            ->when(request('query'), function ($query, $searchQuery) {
+                $query->where('name', 'like', "%{$searchQuery}%");
+            })
+            ->latest()
+            ->paginate(5);
+
+        return $users;
     }
 
-
-    public function store(Request $request )
+    public function store()
     {
+        request()->validate([
+            'name' => 'required',
+            'email' => 'required|unique:users,email',
+            'password' => 'required|min:8',
+        ]);
 
-        $request->validate(User::rules());
         return User::create([
             'name' => request('name'),
             'email' => request('email'),
@@ -45,17 +55,23 @@ class UserController extends Controller
     public function destory(User $user)
     {
         $user->delete();
+
         return response()->noContent();
     }
 
-    public  function changeRole(user $user){
-
+    public function changeRole(User $user)
+    {
         $user->update([
-            'role'=>request('role')
+            'role' => request('role'),
         ]);
-        return response()->json(['success', true]);
 
-
+        return response()->json(['success' => true]);
     }
 
+    public function bulkDelete()
+    {
+        User::whereIn('id', request('ids'))->delete();
+
+        return response()->json(['message' => 'Users deleted successfully!']);
+    }
 }
