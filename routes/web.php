@@ -28,6 +28,7 @@ Route::patch('/api/users/{user}/change-role',[UserController::class,'changeRole'
 
 //Appointment
 
+Route::get('/api/get-appointment-status',[AppointmentController::class,'getAppointmentStatus']);
 Route::get('/api/appointments',[AppointmentController::class,'index']);
 
 Route::get('{view}', AppControoler::class)->where('view', '(.*)');
