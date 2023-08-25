@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Das\AppControoler;
 use App\Http\Controllers\Das\AppointmentController;
+use App\Http\Controllers\Das\ClientController;
 use App\Http\Controllers\Das\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -30,5 +31,10 @@ Route::patch('/api/users/{user}/change-role',[UserController::class,'changeRole'
 
 Route::get('/api/get-appointment-status',[AppointmentController::class,'getAppointmentStatus']);
 Route::get('/api/appointments',[AppointmentController::class,'index']);
+Route::post('/api/appointments/create',[AppointmentController::class,'store']);
+
+///clients
+
+Route::get('/api/clients',[ClientController::class,'index']);
 
 Route::get('{view}', AppControoler::class)->where('view', '(.*)');

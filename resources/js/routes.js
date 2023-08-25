@@ -1,6 +1,7 @@
 import Das from './components/Das.vue';
 import ListAppointments from './pages/appointments/ListAppointments.vue';
 import UserList from './pages/users/UserList.vue';
+import AppointmentForm from './pages/appointments/AppointmentForm.vue';
 import UpdateSetting from './pages/settings/UpdateSetting.vue';
 import UpdateProfile from './pages/profile/UpdateProfile.vue';
 export default[
@@ -37,5 +38,11 @@ export default[
         path: '/admin/profile',
         name: 'admin.profile',
         component: UpdateProfile,
+    },
+
+    {
+        path: '/admin/appointments/create',
+        name: 'admin.profile.create',
+        component: AppointmentForm,
     }
 ]
