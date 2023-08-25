@@ -1,3 +1,24 @@
+<script setup>
+import { ref, onMounted,} from 'vue';
+import { formatDate } from '../../helper.js';
+
+
+const appointments = ref([]);
+
+const getAppointments = () => {
+    axios.get(`/api/appointments`)
+        .then((response) => {
+            appointments.value = response.data;
+        })
+}
+
+onMounted(() => {
+    getAppointments();
+});
+
+</script>
+
+
 <template>
     <div class="content-header">
         <div class="container-fluid">
@@ -27,17 +48,22 @@
                                     Appointment</button>
                             </router-link>
                         </div>
-                        <div class="btn-group btn-secondary">
-                            <button  type="button" class="btn"
-                                   >
+                        <div class="btn-group">
+                            <button  type="button" class="btn btn-secondary" >
                                 <span class="mr-1">All</span>
                                 <span class="badge badge-pill badge-info">10</span>
                             </button>
 
                             <button  type="button"
-                                    class="btn btn-secondary">
-                                <span class="mr-1">sd</span>
-                                <span class="badge badge-pill">12</span>
+                                    class="btn btn-default">
+                                <span class="mr-1">Scheduled</span>
+                                <span class="badge badge-pill badge-primary">0</span>
+                            </button>
+
+                            <button  type="button"
+                                     class="btn btn-default">
+                                <span class="mr-1">Closed</span>
+                                <span class="badge badge-pill badge-success">1</span>
                             </button>
                         </div>
                     </div>
@@ -55,14 +81,15 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>test last</td>
-                                    <td>04:02</td>
-                                    <td>01:08</td>
+                                <tr v-for="(appointment, index) in appointments.data" :key="appointment.id">
+                                    <td>{{index+1}}</td>
+                                    <td>{{appointment.client.first_name}} {{appointment.client.last_name}}</td>
+                                    <td>{{formatDate(appointment.start_time)}}</td>
+                                    <td>{{formatDate(appointment.end_time)}}</td>
                                     <td>
-                                            <span class="badge-info">
-                                                on</span>
+                                        <span class="badge" :class="'badge-'+appointment.status.color">
+                                            {{appointment.status.name}}
+                                                </span>
                                     </td>
                                     <td>
                                         <router-link :to="'#'">

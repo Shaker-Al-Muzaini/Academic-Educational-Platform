@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Das\AppControoler;
+use App\Http\Controllers\Das\AppointmentController;
 use App\Http\Controllers\Das\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -18,10 +19,15 @@ use Illuminate\Support\Facades\Route;
 
 
 
-Route::get('{view}', AppControoler::class)->where('view', '(.*)');
 Route::get('/api/user',[UserController::class,'index']);
 Route::post('/api/createUser',[UserController::class,'store']);
 Route::put('/api/users/{user}',[UserController::class,'update']);
 Route::delete('/api/users/{user}',[UserController::class,'destory']);
 Route::delete('/api/users/',[UserController::class,'bulkDelete']);
 Route::patch('/api/users/{user}/change-role',[UserController::class,'changeRole']);
+
+//Appointment
+
+Route::get('/api/appointments',[AppointmentController::class,'index']);
+
+Route::get('{view}', AppControoler::class)->where('view', '(.*)');
