@@ -18,6 +18,7 @@
         "laravel-vue-pagination": "^4.1.1",
         "lodash": "^4.17.21",
         "moment": "^2.29.4",
+        "sweetalert2": "^11.7.27",
         "vee-validate": "^4.11.3",
         "vue": "^3.3.4",
         "vue-route": "^1.5.1",

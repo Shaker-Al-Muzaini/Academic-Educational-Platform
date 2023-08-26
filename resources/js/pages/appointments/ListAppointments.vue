@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, ref, computed } from 'vue';
-
+import Swal from 'sweetalert2';
 import axios from 'axios';
 
 const selectedStatus = ref();
@@ -29,6 +29,31 @@ const getAppointments = (status) => {
 const appointmentsCount = computed(() => {
     return appointmentStatus.value.map(status => status.count).reduce((acc,value)=>acc+value,0);
 });
+
+const deleteAppointment = (id) => {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            axios.delete(`/api/appointments/${id}`)
+                .then((response) => {
+                    // updateAppointmentStatusCount(id);
+                    appointments.value.data = appointments.value.data.filter(appointment => appointment.id !== id);
+                    Swal.fire(
+                        'Deleted!',
+                        'Your file has been deleted.',
+                        'success'
+                    )
+                });
+        }
+    })
+};
 
 
 onMounted(() => {

@@ -61,8 +61,9 @@ const getAppointment = () => {
         .then(({data}) => {
             form.title = data.title;
             form.client_id = data.client_id;
-            form.start_time = data.formatted_start_time;
-            form.end_time = data.formatted_end_time;
+            form.start_time = data.start_time;
+            form.end_time = data.end_time;
+
             form.das = data.das;
         })
 };

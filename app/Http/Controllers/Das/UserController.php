@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Das;
 
+use App\Enums\AppointmentStatus;
 use App\Http\Controllers\Controller;
+use App\Models\Appointment;
 use App\Models\User;
 
 
@@ -11,10 +13,9 @@ class UserController extends Controller
     public function index()
     {
         $users = User::query()
-            ->when(request('query'), function ($query, $searchQuery) {
-                $query->where('name', 'like', "%{$searchQuery}%");
-            })
-            ->latest()
+            ->when(request('query'), fn ($query, $searchQuery) =>
+                $query->where('name', 'like', "%{$searchQuery}%")
+            )->latest()
             ->paginate(5);
 
         return $users;
@@ -22,16 +23,17 @@ class UserController extends Controller
 
     public function store()
     {
-        request()->validate([
-            'name' => 'required',
-            'email' => 'required|unique:users,email',
-            'password' => 'required|min:8',
-        ]);
 
-        return User::create([
-            'name' => request('name'),
-            'email' => request('email'),
-            'password' => bcrypt(request('password')),
+        // validate
+        $validated =request()->validate(User::rules());
+
+
+       return User::create([
+
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => $validated['password'],
+
         ]);
     }
 
@@ -56,7 +58,7 @@ class UserController extends Controller
     {
         $user->delete();
 
-        return response()->noContent();
+        return response()->json(['success' => true], 200);
     }
 
     public function changeRole(User $user)

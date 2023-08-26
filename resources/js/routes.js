@@ -42,7 +42,12 @@ export default[
 
     {
         path: '/admin/appointments/create',
-        name: 'admin.profile.create',
+        name: 'admin.appointments.create',
+        component: AppointmentForm,
+    },
+    {
+        path: '/admin/appointments/:id/edit',
+        name: 'admin.appointments.edit',
         component: AppointmentForm,
     }
 ]
