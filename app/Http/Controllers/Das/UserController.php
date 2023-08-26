@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Das;
 use App\Enums\AppointmentStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
+use App\Models\Setting;
 use App\Models\User;
 
 
@@ -16,7 +17,7 @@ class UserController extends Controller
             ->when(request('query'), fn ($query, $searchQuery) =>
                 $query->where('name', 'like', "%{$searchQuery}%")
             )->latest()
-            ->paginate(5);
+            ->paginate(\setting(('pagination_limit')));
 
         return $users;
     }

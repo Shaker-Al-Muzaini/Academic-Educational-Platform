@@ -31,6 +31,9 @@ class User extends Authenticatable
         'password',
         'role',
     ];
+    protected $appends = [
+        'formatted_created_at',
+    ];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -67,5 +70,16 @@ class User extends Authenticatable
             get: fn ($value)=>RoleType::from($value)->name,
         );
     }
+
+    public function getFormattedCreatedAtAttribute()
+    {
+        return $this->created_at->format(setting('date_format'));
+    }
+//    public function avatar(): Attribute
+//    {
+//        return Attribute::make(
+//            get: fn ($value) => asset(Storage::url($value) ?? 'noimage.png'),
+//        );
+//    }
 
 }

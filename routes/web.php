@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\Das\AdminDasController;
 use App\Http\Controllers\Das\AppControoler;
 use App\Http\Controllers\Das\AppointmentController;
 use App\Http\Controllers\Das\ClientController;
+use App\Http\Controllers\Das\ProfileController;
+use App\Http\Controllers\Das\SettingController;
 use App\Http\Controllers\Das\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,25 +22,43 @@ use Illuminate\Support\Facades\Route;
 
 
 
-
-Route::get('/api/user',[UserController::class,'index']);
-Route::post('/api/createUser',[UserController::class,'store']);
-Route::put('/api/users/{user}',[UserController::class,'update']);
-Route::delete('/api/users/{user}',[UserController::class,'destory']);
-Route::delete('/api/users/',[UserController::class,'bulkDelete']);
-Route::patch('/api/users/{user}/change-role',[UserController::class,'changeRole']);
+Route::middleware('auth')->group(function () {
+    Route::get('/api/user', [UserController::class, 'index']);
+    Route::post('/api/createUser', [UserController::class, 'store']);
+    Route::put('/api/users/{user}', [UserController::class, 'update']);
+    Route::delete('/api/users/{user}', [UserController::class, 'destory']);
+    Route::delete('/api/users/', [UserController::class, 'bulkDelete']);
+    Route::patch('/api/users/{user}/change-role', [UserController::class, 'changeRole']);
 
 //Appointment
-Route::get('/api/get-appointment-status',[AppointmentController::class,'getAppointmentStatus']);
-Route::get('/api/appointments',[AppointmentController::class,'index']);
-Route::post('/api/appointments/create',[AppointmentController::class,'store']);
-Route::get('/api/appointments/{appointment}/edit',[AppointmentController::class,'edit']);
-Route::put('/api/appointments/{appointment}/edit',[AppointmentController::class,'update']);
-Route::delete('/api/appointments/{appointment}',[AppointmentController::class,'destroy']);
+    Route::get('/api/get-appointment-status', [AppointmentController::class, 'getAppointmentStatus']);
+    Route::get('/api/appointments', [AppointmentController::class, 'index']);
+    Route::post('/api/appointments/create', [AppointmentController::class, 'store']);
+    Route::get('/api/appointments/{appointment}/edit', [AppointmentController::class, 'edit']);
+    Route::put('/api/appointments/{appointment}/edit', [AppointmentController::class, 'update']);
+    Route::delete('/api/appointments/{appointment}', [AppointmentController::class, 'destroy']);
 
 
 ///clients
 
-Route::get('/api/clients',[ClientController::class,'index']);
+    Route::get('/api/clients', [ClientController::class, 'index']);
+
+    //Admin Deshboard
+
+    Route::get('/api/stats/appointments',[AdminDasController::class,'index']);
+    Route::get('/api/stats/users',[AdminDasController::class,'users']);
+
+    //Settings
+
+    Route::get('/api/settings',[SettingController::class,'index']);
+    Route::post('/api/settings',[SettingController::class,'update']);
+
+    //Profiles
+
+    Route::get('/api/profile', [ProfileController::class, 'index']);
+//    Route::put('/api/profile', [ProfileController::class, 'update']);
+    Route::post('/api/upload-profile-image', [ProfileController::class, 'uploadImage']);
+    Route::post('/api/change-user-password', [ProfileController::class, 'changePassword']);
+});
 
 Route::get('{view}', AppControoler::class)->where('view', '(.*)')->middleware('auth');
