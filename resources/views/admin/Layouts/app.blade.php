@@ -219,17 +219,21 @@
                             </li>
                         </ul>
                     </li>
+
                     <li class="nav-item">
-                        <a href="#"   class="nav-link">
-                            <i class="nav-icon fas fa-sign-out-alt"></i>
-                            <p>
-                                Logout
-                            </p>
-                        </a>
+                        <form method="Post" action="{{route('logout')}}" class="nav-link">
+                            @csrf
+                            <a href="#"  onclick="event.preventDefault();this.closest('form').submit();">
+                                <i class="nav-icon fas fa-sign-out-alt"></i>
+                                <p>
+                                    Logout
+                                </p>
+                            </a>
+                        </form>
+
                     </li>
                 </ul>
             </nav>
-
         </div>
 
     </aside>

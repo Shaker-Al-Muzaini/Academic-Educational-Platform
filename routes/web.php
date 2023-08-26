@@ -40,4 +40,4 @@ Route::delete('/api/appointments/{appointment}',[AppointmentController::class,'d
 
 Route::get('/api/clients',[ClientController::class,'index']);
 
-Route::get('{view}', AppControoler::class)->where('view', '(.*)');
+Route::get('{view}', AppControoler::class)->where('view', '(.*)')->middleware('auth');
