@@ -1,0 +1,17 @@
+<?php
+
+use App\Models\Setting;
+use Illuminate\Support\Facades\Cache;
+
+function setting($key)
+{
+    $settings = Cache::rememberForever('settings', fn () =>
+         Setting::pluck('value', 'key')->all()
+    );
+
+    if (! $settings) {
+        $settings = config('settings.default');
+    }
+
+    return $settings[$key] ?? false;
+}
