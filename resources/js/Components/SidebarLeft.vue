@@ -1,15 +1,23 @@
 <script setup>
 import { useAuthUserStore } from '../stores/AuthUserStore';
+import { useSettingStore } from '../stores/SettingStore';
+import {useRouter} from "vue-router";
+
+
+
+
+
+
+const router=useRouter();
 const authUserStore = useAuthUserStore();
-defineProps({
-    user: Object,
-    settings: Object,
-});
+const settingStore = useSettingStore();
+
 
 const logout = () => {
     axios.post('/logout')
         .then((response) => {
-            window.location.href = '/login';
+            authUserStore.user.name='';
+            router.push('/login');
         });
 };
 </script>
@@ -17,8 +25,8 @@ const logout = () => {
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
 
         <a href="" class="brand-link">
-            <img :src="user?.avatar" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-            <span class="brand-text font-weight-light">{{settings?.app_name}}</span>
+            <img :src="authUserStore.user.avatar" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+            <span class="brand-text font-weight-light">{{settingStore.setting.app_name}}</span>
         </a>
 
         <div class="sidebar">
@@ -28,23 +36,23 @@ const logout = () => {
                     <img :src="authUserStore.user.avatar" class="img-circle elevation-2" alt="User Image">
                 </div>
                 <div class="info">
-                    <router-link to="/admin/profile" class="d-block">{{authUserStore.user.name }}</router-link>
+                    <router-link to="#" class="d-block">{{authUserStore.user.name }}</router-link>
                 </div>
             </div>
 
 
             <nav class="mt-2">
-                <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview"  data-accordion="false">
 
                     <li class="nav-item menu-open">
                         <a href="#" class="nav-link ">
                             <i class="nav-icon fas fa-tachometer-alt"></i>
                             <p>
                                 Dashboard Pages
-                                <i class="right fas fa-angle-left"></i>
+
                             </p>
                         </a>
-                        <ul class="nav  nav-treeview ">
+                        <ul class="nav  nav-tabs-right ">
                             <li class="nav-item">
                                 <router-link to="/admin/dashboard" active-class="active" class="nav-link">
                                     <i class="nav-icon fas fa-tachometer-alt"></i>
