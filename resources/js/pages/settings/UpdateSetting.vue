@@ -5,12 +5,15 @@ import { useToastr } from '../../toastr.js';
 const settings = ref([]);
 const toastr = useToastr();
 
+
 const getSettings = () => {
     axios.get('/api/settings')
         .then((response) => {
             settings.value = response.data;
         });
+
 };
+
 
 const errors = ref();
 const updateSettings = () => {

@@ -12,6 +12,7 @@
     },
     "dependencies": {
         "@vitejs/plugin-vue": "^4.3.2",
+        "@vueuse/core": "^10.4.1",
         "admin-lte": "3.2",
         "flatpickr": "^4.6.13",
         "jquery": "^3.7.0",
