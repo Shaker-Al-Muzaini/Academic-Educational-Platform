@@ -13,8 +13,10 @@ const grades =  ref({'data': []});
 const formValues = ref();
 const form = ref(null);
 const editing = ref(false);
+
+
 const getGrades = (page = 1) => {
-    axios.get('/api/grades?page=${page}',)
+    axios.get(`/api/grades/?page=${page}`)
         .then((response) => {
             grades.value = response.data;
         })
@@ -179,6 +181,7 @@ onMounted(() => {
                             </table>
                             <Bootstrap4Pagination :data="grades" @pagination-change-page="getGrades" />
                         </div>
+
                     </div>
                 </div>
             </div>
