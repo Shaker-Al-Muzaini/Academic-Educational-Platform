@@ -5,6 +5,7 @@ import AppointmentForm from './pages/appointments/AppointmentForm.vue';
 import UpdateSetting from './pages/settings/UpdateSetting.vue';
 import UpdateProfile from './pages/profile/UpdateProfile.vue';
 import Login from './pages/auth/Login.vue'
+import Grades from './pages/grades/ListGrades.vue'
 export default[
     {
         path: '/admin/dashboard',
@@ -56,5 +57,11 @@ export default[
         path: '/admin/appointments/:id/edit',
         name: 'admin.appointments.edit',
         component: AppointmentForm,
-    }
+    },
+    {
+        path: '/admin/grades',
+        name: 'admin.grades',
+        component: Grades,
+    },
+
 ]

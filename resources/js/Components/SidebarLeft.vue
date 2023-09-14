@@ -79,6 +79,15 @@ const logout = () => {
                                     </p>
                                 </router-link>
                             </li>
+
+                            <li class="nav-item">
+                                <router-link to="/admin/grades" active-class="active" class="nav-link">
+                                    <i class="nav-icon fas fa-graduation-cap"></i>
+                                    <p>
+                                        Grades
+                                    </p>
+                                </router-link>
+                            </li>
                             <li class="nav-item">
                                 <router-link to ="/admin/settings" active-class="active" class="nav-link">
                                     <i class="nav-icon fas fa-cog"></i>

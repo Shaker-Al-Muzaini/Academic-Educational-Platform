@@ -4,6 +4,7 @@ use App\Http\Controllers\Das\AdminDasController;
 use App\Http\Controllers\Das\AppControoler;
 use App\Http\Controllers\Das\AppointmentController;
 use App\Http\Controllers\Das\ClientController;
+use App\Http\Controllers\Das\GradesController;
 use App\Http\Controllers\Das\ProfileController;
 use App\Http\Controllers\Das\SettingController;
 use App\Http\Controllers\Das\UserController;
@@ -59,6 +60,15 @@ Route::middleware('auth')->group(function () {
     Route::put('/api/profile', [ProfileController::class, 'update']);
     Route::post('/api/upload-profile-image', [ProfileController::class, 'uploadImage']);
     Route::post('/api/change-user-password', [ProfileController::class, 'changePassword']);
+
+
+    //Grades
+
+    Route::get('/api/grades', [GradesController::class, 'index']);
+    Route::post('/api/createGrades', [GradesController::class, 'store']);
+    Route::put('/api/grades/{grade}', [GradesController::class, 'update']);
+    Route::delete('/api/grades/{grade}', [GradesController::class, 'destroy']);
+
 });
 
 Route::get('{view}', AppControoler::class)->where('view', '(.*)')->middleware('auth');
