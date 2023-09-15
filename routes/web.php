@@ -3,6 +3,7 @@
 use App\Http\Controllers\Das\AdminDasController;
 use App\Http\Controllers\Das\AppControoler;
 use App\Http\Controllers\Das\AppointmentController;
+use App\Http\Controllers\Das\ClassRoomController;
 use App\Http\Controllers\Das\ClientController;
 use App\Http\Controllers\Das\GradesController;
 use App\Http\Controllers\Das\ProfileController;
@@ -65,9 +66,15 @@ Route::middleware('auth')->group(function () {
     //Grades
 
     Route::get('/api/grades', [GradesController::class, 'index']);
+    Route::get('/api/grade', [GradesController::class, 'index2']);
     Route::post('/api/createGrades', [GradesController::class, 'store']);
     Route::put('/api/grades/{grade}', [GradesController::class, 'update']);
     Route::delete('/api/grades/{grade}', [GradesController::class, 'destroy']);
+
+
+    //classRoom
+    Route::get('/api/classRooms', [ClassRoomController::class, 'index']);
+
 
 });
 

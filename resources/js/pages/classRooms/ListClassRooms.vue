@@ -8,33 +8,33 @@ import axios from 'axios';
 import { useToastr } from '../../toastr.js';
 
 const toastr = useToastr();
-const grades =  ref({'data': []});
+const classRooms =  ref({'data': []});
 const formValues = ref();
 const form = ref(null);
 const editing = ref(false);
 
 
-const getGrades = (page = 1) => {
-    axios.get(`/api/grades/?page=${page}`)
+const getClassRooms = (page = 1) => {
+    axios.get(`/api/classRooms/?page=${page}`)
         .then((response) => {
-            grades.value = response.data;
+            classRooms.value = response.data;
         })
 };
 
 //Craeteting
 
-const createGradesSchema = yup.object({
-    name: yup.string().required(),
-    notes: yup.string().required(),
+const createClassRoomSchema = yup.object({
+    name_class: yup.string().required(),
+    grade_id: yup.string().required(),
 });
 
-const createGrades = (values, { resetForm, setErrors }) => {
-    axios.post('/api/createGrades', values)
+const createClassRooms = (values, { resetForm, setErrors }) => {
+    axios.post('/api/createClassRooms', values)
         .then((response) => {
             grades.value.data.unshift(response.data);
-            $('#gradesFormModal').modal('hide');
+            $('#classRoomsFormModal').modal('hide');
             resetForm();
-            toastr.success('Grades created successfully!');
+            toastr.success('ClassRooms created successfully!');
         })
         .catch((error) => {
             if (error.response.data.errors) {
@@ -42,39 +42,45 @@ const createGrades = (values, { resetForm, setErrors }) => {
             }
         })
 };
-const addGrades = () => {
+const addClassRooms = () => {
     editing.value = false;
-    $('#gradesFormModal').modal('show');
+    $('#classRoomsFormModal').modal('show');
 };
 
-
+const grades = ref();
+const getGrade = () => {
+    axios.get('/api/grade')
+        .then((response) => {
+            grades.value = response.data;
+        })
+};
 
 
 
 //editing
 
-const editGraesSchema = yup.object({
-    name: yup.string().required(),
-    notes: yup.string().required(),
+const editClassRoomsSchema = yup.object({
+    name_class: yup.string().required(),
+    grade_id: yup.string().required(),
 });
 
-const editGgrad = (grade) => {
+const editClassRooms = (classRoom) => {
     editing.value = true;
     form.value.resetForm();
-    $('#gradesFormModal').modal('show');
+    $('#classRoomsFormModal').modal('show');
     formValues.value = {
-        id: grade.id,
-        name: grade.name,
-        notes: grade.notes,
+        id: classRoom.id,
+        name_class: classRoom.name_class,
+        grade_id: classRoom.grade_id,
     };
 };
-const updateGrades = (values, { setErrors }) => {
-    axios.put('/api/grades/'+ formValues.value.id, values)
+const updateClassRooms = (values, { setErrors }) => {
+    axios.put('/api/classRooms/'+ formValues.value.id, values)
         .then((response) => {
-            const index = grades.value.data.findIndex(grade => grade.id === response.data.id);
-            grades.value.data[index] = response.data;
-            $('#gradesFormModal').modal('hide');
-            toastr.success('grades updated successfully!');
+            const index = classRooms.value.data.findIndex(classRoom => classRoom.id === response.data.id);
+            classRooms.value.data[index] = response.data;
+            $('#classRoomsFormModal').modal('hide');
+            toastr.success('ClassRoom updated successfully!');
         }).catch((error) => {
         setErrors(error.response.data.errors);
         console.log(error);
@@ -83,13 +89,13 @@ const updateGrades = (values, { setErrors }) => {
 const handleSubmit = (values, actions) => {
     // console.log(actions);
     if (editing.value) {
-        updateGrades(values, actions);
+        updateClassRooms(values, actions);
     } else {
-        createGrades(values, actions);
+        createClassRooms(values, actions);
     }
 }
 
-const deletegrades = (id) => {
+const deleteclassRoom = (id) => {
     Swal.fire({
         title: 'Are you sure?',
         text: "You won't be able to revert this!",
@@ -100,9 +106,9 @@ const deletegrades = (id) => {
         confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
         if (result.isConfirmed) {
-            axios.delete(`/api/grades/${id}`)
+            axios.delete(`/api/classRooms/${id}`)
                 .then((response) => {
-                    grades.value.data = grades.value.data.filter(grade => grade.id !== id);
+                    classRooms.value.data = classRooms.value.data.filter(classRoom => classRoom.id !== id);
                     Swal.fire(
                         'Deleted!',
                         'Your file has been deleted.',
@@ -115,8 +121,8 @@ const deletegrades = (id) => {
 
 
 onMounted(() => {
-    getGrades();
-    // getGradestatus();
+    getClassRooms();
+    getGrade();
 });
 </script>
 <template>
@@ -124,12 +130,12 @@ onMounted(() => {
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0">Grades</h1>
+                    <h1 class="m-0">Class Room</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item active">Grades</li>
+                        <li class="breadcrumb-item active">class Room</li>
                     </ol>
                 </div>
             </div>
@@ -144,11 +150,11 @@ onMounted(() => {
                     <div class="d-flex justify-content-between mb-2">
                         <div>
                             <div class="d-flex">
-                                <button @click="addGrades" type="button" class="mb-2 btn btn-primary">
+                                <button @click="addClassRooms" type="button" class="mb-2 btn btn-primary">
                                     <i class="fa fa-plus-circle mr-1"></i>
-                                    Add New Grades
+                                    Add New ClassRoom
                                 </button>
-                        </div>
+                            </div>
                         </div>
                     </div>
                     <div class="card">
@@ -157,28 +163,28 @@ onMounted(() => {
                                 <thead>
                                 <tr>
                                     <th scope="col">#</th>
-                                    <th scope="col">Grades Name</th>
-                                    <th scope="col">Grades Notes</th>
+                                    <th scope="col">Class Room Name</th>
+                                    <th scope="col">Grade Name</th>
                                     <th scope="col">Options</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr v-for="(grade, index) in grades.data" :key="grade.id">
+                                <tr v-for="(classRoom, index) in classRooms.data" :key="classRoom.id">
                                     <td>{{ index + 1 }}</td>
-                                    <td>{{ grade.name }}</td>
-                                    <td>{{ grade.notes }}</td>
+                                    <td>{{ classRoom.name_class }}</td>
+                                    <td>{{ classRoom.grade.name }}</td>
 
                                     <td>
-                                        <a  href="#" @click.prevent="editGgrad(grade)"><i class="fa fa-edit mr-1"></i></a>
+                                        <a  href="#" @click.prevent="editClassRooms(classRoom)"><i class="fa fa-edit mr-1"></i></a>
 
-                                        <a  href="#" @click.prevent="deletegrades(grade.id)">
+                                        <a  href="#" @click.prevent="deleteclassRoom(classRoom.id)">
                                             <i class="fa fa-trash text-danger ml-1"></i>
                                         </a>
                                     </td>
                                 </tr>
                                 </tbody>
                             </table>
-                            <Bootstrap4Pagination :data="grades" @pagination-change-page="getGrades" />
+                            <Bootstrap4Pagination :data="classRooms" @pagination-change-page="getClassRooms" />
                         </div>
 
                     </div>
@@ -187,34 +193,37 @@ onMounted(() => {
         </div>
     </div>
 
-    <div class="modal fade" id="gradesFormModal" data-backdrop="static" tabindex="-1" role="dialog"
+    <div class="modal fade" id="classRoomsFormModal" data-backdrop="static" tabindex="-1" role="dialog"
          aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="staticBackdropLabel">
-                        <span v-if="editing">Edit User</span>
-                        <span v-else>Add New Grades</span>
+                        <span v-if="editing">Edit ClassRoom</span>
+                        <span v-else>Add New ClassRoom</span>
                     </h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <Form ref="form" @submit="handleSubmit" :validation-schema="editing ? editGraesSchema : createGradesSchema"
+                <Form ref="form" @submit="handleSubmit" :validation-schema="editing ? editClassRoomsSchema : createClassRoomSchema"
                       v-slot="{ errors }" :initial-values="formValues">
                     <div class="modal-body">
                         <div class="form-group">
-                            <label for="name">Name</label>
-                            <Field name="name" type="text" class="form-control" :class="{ 'is-invalid': errors.name }"
-                                   id="name" aria-describedby="nameHelp" placeholder="Enter full name" />
-                            <span class="invalid-feedback">{{ errors.name }}</span>
+                            <label for="name_class">ClassRoom Name </label>
+                            <Field name="name_class" type="text" class="form-control" :class="{ 'is-invalid': errors.name_class }"
+                                   id="name_class" aria-describedby="name_classHelp" placeholder="Enter full ClassRoom Name" />
+                            <span class="invalid-feedback">{{ errors.name_class }}</span>
                         </div>
 
+
                         <div class="form-group">
-                            <label for="email">Notes</label>
-                            <Field as="textarea" name="notes"  class="form-control"
-                                   :class="{ 'is-invalid': errors.notes }" id="notes" placeholder="Enter notes"/>
-                            <span class="invalid-feedback">{{ errors.notes }}</span>
+                            <label for="email">Grade Name</label>
+                            <Field name="grade_id" as="select" class="form-control" :class="{ 'is-invalid': errors.grade_id }"
+                                   id="grade_id">
+                                <option v-for="grade in grades" :value="grade.id" :key="grade.id">{{grade.name}}</option>
+                            </Field>
+                            <span class="invalid-feedback">{{ errors.grade_id }}</span>
 
                         </div>
 

@@ -6,6 +6,7 @@ import UpdateSetting from './pages/settings/UpdateSetting.vue';
 import UpdateProfile from './pages/profile/UpdateProfile.vue';
 import Login from './pages/auth/Login.vue'
 import Grades from './pages/grades/ListGrades.vue'
+import ClassRooms from './pages/classRooms/ListClassRooms.vue'
 export default[
     {
         path: '/admin/dashboard',
@@ -62,6 +63,12 @@ export default[
         path: '/admin/grades',
         name: 'admin.grades',
         component: Grades,
+    },
+
+    {
+        path: '/admin/classRooms',
+        name: 'admin.classRooms',
+        component: ClassRooms,
     },
 
 ]
