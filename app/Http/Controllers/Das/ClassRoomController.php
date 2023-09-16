@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Das;
 
 use App\Http\Controllers\Controller;
+use App\Models\Appointment;
 use App\Models\ClassRoom;
 use App\Models\Grades;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class ClassRoomController extends Controller
@@ -19,18 +21,21 @@ class ClassRoomController extends Controller
             ->paginate(\setting(('pagination_limit')));
         return $classRooms;
     }
-
-    public function create()
+    public function index2()
     {
-        //
+        return ClassRoom::latest()->get();
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated =request()->validate(ClassRoom::rules(),[
+            'grade_id.required' => 'The grade name field is required.',
+        ]);
+
+        return ClassRoom::create([
+            'name_class' => $validated['name_class'],
+            'grade_id' => $validated['grade_id'],
+        ]);
     }
 
     /**
@@ -54,7 +59,16 @@ class ClassRoomController extends Controller
      */
     public function update(Request $request, ClassRoom $classRoom)
     {
-        //
+        request()->validate([
+            'name_class' => 'required',
+            'grade_id' => 'required',
+
+        ]);
+        $classRoom->update([
+            'name_class' => request('name_class'),
+            'grade_id' => request('grade_id'),
+        ]);
+        return $classRoom;
     }
 
     /**
@@ -62,6 +76,14 @@ class ClassRoomController extends Controller
      */
     public function destroy(ClassRoom $classRoom)
     {
-        //
+        $classRoom->delete();
+
+        return response()->json(['success' => true], 200);
+    }
+
+    public function bulkDelete()
+    {
+        ClassRoom::whereIn('id', request('ids'))->delete();
+        return response()->json(['message' => 'ClassRoom deleted successfully!']);
     }
 }

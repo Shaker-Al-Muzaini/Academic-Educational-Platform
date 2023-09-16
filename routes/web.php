@@ -7,6 +7,7 @@ use App\Http\Controllers\Das\ClassRoomController;
 use App\Http\Controllers\Das\ClientController;
 use App\Http\Controllers\Das\GradesController;
 use App\Http\Controllers\Das\ProfileController;
+use App\Http\Controllers\Das\SectionController;
 use App\Http\Controllers\Das\SettingController;
 use App\Http\Controllers\Das\UserController;
 use Illuminate\Support\Facades\Route;
@@ -74,6 +75,18 @@ Route::middleware('auth')->group(function () {
 
     //classRoom
     Route::get('/api/classRooms', [ClassRoomController::class, 'index']);
+    Route::get('/api/classRoom', [ClassRoomController::class, 'index2']);
+    Route::post('/api/createClassRooms', [ClassRoomController::class, 'store']);
+    Route::put('/api/classRooms/{classRoom}', [ClassRoomController::class, 'update']);
+    Route::delete('/api/classRooms/{classRoom}', [ClassRoomController::class, 'destroy']);
+    Route::delete('/api/classRooms/', [ClassRoomController::class, 'bulkDelete']);
+
+   //Sections
+    Route::get('/api/grade_sections', [SectionController::class, 'index']);
+    Route::post('/api/createSections', [SectionController::class, 'store']);
+    Route::put('/api/sections/{section}', [SectionController::class, 'update']);
+    Route::delete('/api/sections/{section}', [SectionController::class, 'destroy']);
+
 
 
 });

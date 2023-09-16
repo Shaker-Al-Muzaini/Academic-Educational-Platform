@@ -12,12 +12,16 @@ const classRooms =  ref({'data': []});
 const formValues = ref();
 const form = ref(null);
 const editing = ref(false);
-
+const grades = ref();
+const selectedUsers = ref([]);
+const selectAll = ref(false);
 
 const getClassRooms = (page = 1) => {
     axios.get(`/api/classRooms/?page=${page}`)
         .then((response) => {
             classRooms.value = response.data;
+            selectedUsers.value = [];
+            selectAll.value = false;
         })
 };
 
@@ -31,7 +35,7 @@ const createClassRoomSchema = yup.object({
 const createClassRooms = (values, { resetForm, setErrors }) => {
     axios.post('/api/createClassRooms', values)
         .then((response) => {
-            grades.value.data.unshift(response.data);
+            classRooms.value.data.unshift(response.data);
             $('#classRoomsFormModal').modal('hide');
             resetForm();
             toastr.success('ClassRooms created successfully!');
@@ -47,7 +51,7 @@ const addClassRooms = () => {
     $('#classRoomsFormModal').modal('show');
 };
 
-const grades = ref();
+
 const getGrade = () => {
     axios.get('/api/grade')
         .then((response) => {
@@ -94,7 +98,11 @@ const handleSubmit = (values, actions) => {
         createClassRooms(values, actions);
     }
 }
-
+//  حل مشكلة تحديث الجداول  تلقائي بسب العِلاقة
+const getGradeName = (gradeId) => {
+    const grade = grades.value.find(grade => grade.id === gradeId);
+    return grade ? grade.name : 'gradeNmae';
+}
 const deleteclassRoom = (id) => {
     Swal.fire({
         title: 'Are you sure?',
@@ -118,7 +126,38 @@ const deleteclassRoom = (id) => {
         }
     })
 };
+const toggleSelection = (classRoom) => {
+    const index = selectedUsers.value.indexOf(classRoom.id);
+    if (index === -1) {
+        selectedUsers.value.push(classRoom.id);
+    } else {
+        selectedUsers.value.splice(index, 1);
+    }
+    console.log(selectedUsers.value);
+};
 
+const bulkDelete = () => {
+    axios.delete('/api/classRooms', {
+        data: {
+            ids: selectedUsers.value
+        }
+    })
+        .then(response => {
+            classRooms.value.data = classRooms.value.data.filter(classRoom => !selectedUsers.value.includes(classRoom.id));
+            selectedUsers.value = [];
+            selectAll.value = false;
+            toastr.success(response.data.message);
+        });
+};
+
+const selectAllUsers = () => {
+    if (selectAll.value) {
+        selectedUsers.value = classRooms.value.data.map(classRoom => classRoom.id);
+    } else {
+        selectedUsers.value = [];
+    }
+    console.log(selectedUsers.value);
+}
 
 onMounted(() => {
     getClassRooms();
@@ -145,24 +184,32 @@ onMounted(() => {
 
     <div class="content">
         <div class="container-fluid">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="d-flex justify-content-between mb-2">
-                        <div>
+                    <div class="d-flex justify-content-between">
+
                             <div class="d-flex">
                                 <button @click="addClassRooms" type="button" class="mb-2 btn btn-primary">
                                     <i class="fa fa-plus-circle mr-1"></i>
                                     Add New ClassRoom
                                 </button>
+
+
+                            <div  v-if="selectedUsers.length > 0">
+                                <button @click="bulkDelete" type="button" class="ml-2 mb-2 btn btn-danger">
+                                    <i class="fa fa-trash mr-1"></i>
+                                    Delete Selected
+                                </button>
+                                <span class="ml-2">Selected {{ selectedUsers.length }} users</span>
                             </div>
-                        </div>
+                            </div>
                     </div>
                     <div class="card">
                         <div class="card-body">
                             <table class="table table-bordered">
                                 <thead>
                                 <tr>
-                                    <th scope="col">#</th>
+
+                                    <th><input type="checkbox" v-model="selectAll" @change="selectAllUsers" /></th>
+                                    <th style="width: 10px">#</th>
                                     <th scope="col">Class Room Name</th>
                                     <th scope="col">Grade Name</th>
                                     <th scope="col">Options</th>
@@ -170,10 +217,10 @@ onMounted(() => {
                                 </thead>
                                 <tbody>
                                 <tr v-for="(classRoom, index) in classRooms.data" :key="classRoom.id">
+                                    <td style="width:0px"></td>
                                     <td>{{ index + 1 }}</td>
                                     <td>{{ classRoom.name_class }}</td>
-                                    <td>{{ classRoom.grade.name }}</td>
-
+                                    <td>{{ getGradeName(classRoom.grade_id) }}</td>
                                     <td>
                                         <a  href="#" @click.prevent="editClassRooms(classRoom)"><i class="fa fa-edit mr-1"></i></a>
 
@@ -190,8 +237,6 @@ onMounted(() => {
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
     <div class="modal fade" id="classRoomsFormModal" data-backdrop="static" tabindex="-1" role="dialog"
          aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -212,7 +257,7 @@ onMounted(() => {
                         <div class="form-group">
                             <label for="name_class">ClassRoom Name </label>
                             <Field name="name_class" type="text" class="form-control" :class="{ 'is-invalid': errors.name_class }"
-                                   id="name_class" aria-describedby="name_classHelp" placeholder="Enter full ClassRoom Name" />
+                                   id="name_class"  placeholder="Enter full ClassRoom Name" />
                             <span class="invalid-feedback">{{ errors.name_class }}</span>
                         </div>
 
