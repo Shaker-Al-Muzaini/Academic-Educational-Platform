@@ -7,27 +7,27 @@ import * as yup from 'yup';
 import axios from 'axios';
 import { useToastr } from '../../toastr.js';
 const toastr = useToastr();
-const grades = ref();
+const grades = ref({'data': []});
 const gradeing = ref();
 const class_rooms = ref();
 const formValues = ref();
 const form = ref(null);
 const editing = ref(false);
 
-
-
-const getSections = () => {
-    axios.get('/api/grade_sections')
+const getSections = (page = 1) => {
+    axios.get(`/api/grade_sections/?page=${page}`)
         .then((response) => {
             grades.value = response.data;
         })
 };
+
 const getGrade = () => {
     axios.get('/api/grade')
         .then((response) => {
             gradeing.value = response.data;
         })
 };
+
 const getClass_room = () => {
     axios.get('/api/classRoom')
         .then((response) => {
@@ -35,18 +35,7 @@ const getClass_room = () => {
         })
 };
 
-
-const getClassRoomByName = (className) => {
-    const classRoom = class_rooms.value.find(classRoom => classRoom.name_class === className);
-    return classRoom ? classRoom.name_class : 'gradeName';
-}
-
-
-
-
-
-//Craeteting
-
+// Craeteting
 const createSchema = yup.object({
     name: yup.string().required(),
     grade_id: yup.string().required(),
@@ -56,10 +45,16 @@ const createSchema = yup.object({
 const create = (values, { resetForm, setErrors }) => {
     axios.post('/api/createSections', values)
         .then((response) => {
-            // تحديث القائمة بعد الإضافة
-            const gradeIndex = grades.value.findIndex(grade => grade.id === response.grade_id);
+            // التحقق من البيانات في الاستجابة واستخدام المفتاح الصحيح
+            const gradeId = response.data.grade_id;
+            const sectionToAdd = response.data;
+
+            // البحث عن الصف الصحيح في grades.value.data
+            const gradeIndex = grades.value.data.findIndex(grade => grade.id === gradeId);
+
             if (gradeIndex !== -1) {
-                grades.value[gradeIndex].sections.unshift(response);
+                // إضافة القسم الجديد إلى الصف الصحيح
+                grades.value.data[gradeIndex].sections.unshift(sectionToAdd);
             }
             $('#FormModal').modal('hide');
             resetForm();
@@ -69,22 +64,15 @@ const create = (values, { resetForm, setErrors }) => {
             if (error.response.errors) {
                 setErrors(error.response.errors);
             }
-        })
+        });
 };
-
-
 
 const add = () => {
     editing.value = false;
     $('#FormModal').modal('show');
 };
 
-
-
-
-
-//editing
-
+// Editing
 const editSchema = yup.object({
     name: yup.string().required(),
     grade_id: yup.string().required(),
@@ -102,32 +90,102 @@ const edit = (section) => {
         class_room_id: section.class_room_id,
     };
 };
+const moveSectionToAnotherGrade = (sectionId, sourceGradeId, destinationGradeId) => {
+    // البحث عن المرحلة المصدر
+    const sourceGrade = grades.value.data.find(grade => grade.id === sourceGradeId);
+
+    // البحث عن القسم المطلوب في المرحلة المصدر
+    const sectionIndex = sourceGrade.sections.findIndex(section => section.id === sectionId);
+
+    if (sectionIndex !== -1) {
+        // استخراج القسم من المرحلة المصدر
+        const movedSection = sourceGrade.sections.splice(sectionIndex, 1)[0];
+
+        // البحث عن المرحلة الهدف
+        const destinationGrade = grades.value.data.find(grade => grade.id === destinationGradeId);
+
+        if (destinationGrade) {
+            // إضافة القسم إلى المرحلة الهدف
+            destinationGrade.sections.push(movedSection);
+        }
+    }
+};
+
 const update = (values, { setErrors }) => {
-    axios.put('/api/sections/'+ formValues.value.id, values)
+    const destinationGrade = grades.value.data.find(grade => grade.id === values.grade_id);
+
+    axios.put('/api/grade_sections/' + formValues.value.id, values)
         .then((response) => {
-            // تحديث القائمة بعد التعديل
-            const gradeIndex = grades.value.findIndex(grade => grade.id === response.data.grade_id);
-            if (gradeIndex !== -1) {
-                const sectionIndex = grades.value[gradeIndex].sections.findIndex(section => section.id === response.data.id);
-                if (sectionIndex !== -1) {
-                    Vue.set(grades.value[gradeIndex].sections, sectionIndex, response.data);
-                }
-            }
+            const updatedSection = response.data;
+            const sourceGradeId = formValues.value.grade_id; // معرف المرحلة المصدرة
+            const destinationGradeId = values.grade_id; // معرف المرحلة الهدفة
+
+            // استدعاء دالة النقل
+            moveSectionToAnotherGrade(updatedSection.id, sourceGradeId, destinationGradeId);
+
+            // تحديث اسم المرحلة في الواجهة المستخدم بعد نجاح النقل
+            updateGradeName(destinationGradeId, destinationGrade.name);
+
+            // تحديث اسم القسم في الواجهة المستخدم بعد نجاح النقل
+            updateSectionName(updatedSection.id, updatedSection.name);
+
             $('#FormModal').modal('hide');
             toastr.success('Sections updated successfully!');
         }).catch((error) => {
-        setErrors(error.response.errors);
-        console.log(error);
+        if (error.response && error.response.data && error.response.data.errors) {
+            setErrors(error.response.data.errors);
+        } else {
+            console.error(error);
+        }
     });
 };
+
+
+
+
+const updateGrade = (gradeId, newName) => {
+    axios.put(`/api/grade/${gradeId}`, { name: newName })
+        .then(() => {
+            // تحديث اسم المرحلة في الواجهة المستخدم بعد نجاح الطلب
+            updateGradeName(gradeId, newName);
+        })
+        .catch((error) => {
+            console.error(error);
+        });
+};
+
+const updateGradeName = (gradeId, newName) => {
+    for (const grade of grades.value.data) {
+        if (grade.id === gradeId) {
+            grade.name = newName;
+            return;
+        }
+    }
+};
+
+
+const updateSectionName = (sectionId, newName) => {
+    for (const grade of grades.value.data) {
+        const section = grade.sections.find(section => section.id === sectionId);
+        if (section) {
+            section.name = newName;
+            return;
+        }
+    }
+};
+
+
+
+
+
+
 const handleSubmit = (values, actions) => {
-    // console.log(actions);
     if (editing.value) {
         update(values, actions);
     } else {
         create(values, actions);
     }
-}
+};
 
 const deletes = (id) => {
     Swal.fire({
@@ -140,19 +198,28 @@ const deletes = (id) => {
         confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
         if (result.isConfirmed) {
-            axios.delete(`/api/grades/${id}`)
-                .then((response) => {
-                    grades.value.data = grades.value.data.filter(grade => grade.id !== id);
+            axios.delete(`/api/grade_sections/${id}`)
+                .then(() => {
+                    // حذف العنصر من القائمة بعد الحذف
+                    const gradeIndex = grades.value.data.findIndex(grade => grade.sections.some(section => section.id === id));
+                    if (gradeIndex !== -1) {
+                        const sectionIndex = grades.value.data[gradeIndex].sections.findIndex(section => section.id === id);
+                        if (sectionIndex !== -1) {
+                            grades.value.data[gradeIndex].sections.splice(sectionIndex, 1);
+                        }
+                    }
                     Swal.fire(
                         'Deleted!',
                         'Your file has been deleted.',
                         'success'
-                    )
+                    );
+                })
+                .catch((error) => {
+                    console.error(error);
                 });
         }
-    })
+    });
 };
-
 
 onMounted(() => {
     getSections();
@@ -188,7 +255,7 @@ onMounted(() => {
                 </div>
             </div>
         </div>
-        <div class="card" v-for="grade in grades" :key="grade.id">
+        <div class="card" v-for="grade in grades.data" :key="grade.id">
             <div class="card-header" data-card-widget="collapse" style="cursor: pointer">
                 <h3 class="card-title">{{ grade.name }}</h3>
                 <div class="card-tools">
@@ -212,25 +279,24 @@ onMounted(() => {
                     <tr v-for="(section, index) in grade.sections" :key="section.id">
                         <td>{{ index + 1 }}</td>
                         <td>{{ section.name }}</td>
-                        <td>{{ getClassRoomByName(section.my_class.name_class) }}</td>
-
-                        <td class="project-state">
+                        <td>{{ section.my_class && section.my_class.name_class ? section.my_class.name_class : 'قيد التحميل' }}</td>
+                        <td v-if="section && section.id" class="project-state">
                             <span class="badge badge-success">Success</span>
                         </td>
                         <td class="project-actions text-right">
-                            <a   @click.prevent="edit(section)">
+                            <a @click.prevent="edit(section)">
                                 <i class="fa fa-edit text-info mr-1"></i>
                             </a>
-                            <a  @click.prevent="deletes(classRoom.id)">
+                            <a @click.prevent="deletes(section.id)">
                                 <i class="fa fa-trash text-danger ml-1"></i>
                             </a>
                         </td>
                     </tr>
-<!--                    <tr v-if="grade.sections.length === 0">-->
-<!--                        <td colspan="5">لا توجد أقسام</td>-->
-<!--                    </tr>-->
+
                     </tbody>
                 </table>
+                <Bootstrap4Pagination :data="grades" @pagination-change-page="getSections" />
+
             </div>
         </div>
     </section>

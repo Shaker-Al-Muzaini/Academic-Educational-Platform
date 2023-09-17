@@ -16,8 +16,9 @@ class SectionController extends Controller
     public function index()
     {
 
-        $sections= Grades::latest()->with('sections.My_class')->get();
-
+        $sections= Grades::with('sections.My_class')
+            ->latest()
+            ->paginate(\setting(('pagination_limit')));
         return $sections;
     }
 

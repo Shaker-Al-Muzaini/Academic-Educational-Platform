@@ -6,9 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Section;
 
-/**
- * @method static latest()
- */
+
 class Grades extends Model
 {
     use HasFactory;
@@ -23,6 +21,6 @@ class Grades extends Model
     }
     public function sections()
     {
-        return $this->hasMany(Section::class, 'grade_id');
+        return $this->hasMany(Section::class, 'grade_id')->latest();
     }
 }
