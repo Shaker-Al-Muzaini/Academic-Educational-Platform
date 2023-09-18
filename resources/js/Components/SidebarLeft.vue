@@ -115,6 +115,14 @@ const logout = () => {
                                     </p>
                                 </router-link>
                             </li>
+                            <li class="nav-item">
+                                <router-link to="/admin/test" active-class="active" class="nav-link">
+                                    <i class="nav-icon fas fa-sad-cry"></i>
+                                    <p>
+                                        Testing
+                                    </p>
+                                </router-link >
+                            </li>
 
                             <li class="nav-item">
                                 <router-link to ="/admin/settings" active-class="active" class="nav-link">
@@ -132,6 +140,7 @@ const logout = () => {
                                     </p>
                                 </router-link >
                             </li>
+
                         </ul>
                     </li>
 

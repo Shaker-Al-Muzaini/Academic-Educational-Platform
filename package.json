@@ -20,6 +20,7 @@
         "lodash": "^4.17.21",
         "moment": "^2.29.4",
         "pinia": "^2.1.6",
+        "primevue": "^3.34.1",
         "sweetalert2": "^11.7.27",
         "vee-validate": "^4.11.3",
         "vue": "^3.3.4",

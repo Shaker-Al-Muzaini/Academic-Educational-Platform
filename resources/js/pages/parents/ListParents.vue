@@ -32,8 +32,8 @@ function onComplete() {
                     </div>
                     <div class="card">
                         <div class="card-body">
-                            <FormWizard @on-complete="onComplete" color="#094899">
-                                <TabContent title="Personal details" icon="fa fa-user">
+                            <FormWizard @on-complete="onComplete" color="#007bff">
+                                <TabContent title="Father details" icon="fa fa-user ">
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
@@ -43,8 +43,8 @@ function onComplete() {
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label for="title">Title</label>
-                                                <input type="password" class="form-control" id="title">
+                                                <label for="title">Password</label>
+                                                <input type="password" class="form-control" id="Password">
                                             </div>
                                         </div>
                                     </div>
@@ -92,7 +92,7 @@ function onComplete() {
                                         <textarea class="form-control" id="addressFather" rows="4"></textarea>
                                     </div>
                                 </TabContent>
-                                <TabContent title="Additional Info" icon="fa fa-gear">
+                                <TabContent title="Mother details" icon="fa fa-gear">
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
@@ -152,7 +152,7 @@ function onComplete() {
                                         <textarea class="form-control" id="addressFather" rows="4"></textarea>
                                     </div>
                                 </TabContent>
-                                <TabContent title="Last step" icon="fa fa-city">
+                                <TabContent title="Ending" icon="fa fa-city">
                                     <div class="col-xs-12 text-center">
                                         <div class="col-md-12">
                                             <h3 style="font-family:'Cairo', sans-serif;">هل انت متاكد من حفظ البيانات ؟</h3><br>
