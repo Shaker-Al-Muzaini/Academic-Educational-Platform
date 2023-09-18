@@ -1,38 +1,45 @@
 <script setup>
 import { FormWizard, TabContent } from "vue3-form-wizard";
 import "vue3-form-wizard/dist/style.css";
+import { ref, onMounted} from 'vue';
+import { Form, Field } from 'vee-validate';
+import Swal from 'sweetalert2';
+import { Bootstrap4Pagination } from 'laravel-vue-pagination';
+import * as yup from 'yup';
+import axios from 'axios';
+import { useToastr } from '../../toastr.js';
+import flatpickr from "flatpickr";
 
-function onComplete() {
+const toastr = useToastr();
+const formValues = ref();
+const form = ref(null);
+
+const createAppointment = (values, actions) => {
     alert("Yay. Done!");
-}
+    // axios.post('/api/appointments/create', form)
+    //     .then((response) => {
+    //         router.push('/admin/appointments');
+    //         toastr.success('Appointment created successfully!');
+    //     })
+    //     .catch((error) => {
+    //         actions.setErrors(error.response.data.errors);
+    //     })
+};
+
+
+onMounted(() => {
+
+});
+
 </script>
 <template>
-    <div class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1 class="m-0">Parent</h1>
-                </div>
-            </div>
-        </div>
-    </div>
     <div class="content">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="d-flex justify-content-between mb-2">
-                        <div>
-                            <div class="d-flex">
-                                <button @click="addGrades" type="button" class="mb-2 btn btn-primary">
-                                    <i class="fa fa-plus-circle mr-1"></i>
-                                    Add New Grades
-                                </button>
-                            </div>
-                        </div>
-                    </div>
                     <div class="card">
                         <div class="card-body">
-                            <FormWizard @on-complete="onComplete" color="#007bff">
+                            <FormWizard @on-complete="createAppointment" color="#007bff">
                                 <TabContent title="Father details" icon="fa fa-user ">
                                     <div class="row">
                                         <div class="col-md-6">
@@ -43,8 +50,8 @@ function onComplete() {
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label for="title">Password</label>
-                                                <input type="password" class="form-control" id="Password">
+                                                <label for="password">Password</label>
+                                                <input type="password" class="form-control" >
                                             </div>
                                         </div>
                                     </div>
@@ -156,11 +163,6 @@ function onComplete() {
                                     <div class="col-xs-12 text-center">
                                         <div class="col-md-12">
                                             <h3 style="font-family:'Cairo', sans-serif;">هل انت متاكد من حفظ البيانات ؟</h3><br>
-                                            <button class="btn btn-danger
-                                            btn-me nextBtn btn-lg m-1" type="button">NO</button>
-
-                                            <button class="btn btn-success btn-lg btn-lg m-1"
-                                                    type="button">Yes</button>
                                         </div>
                                     </div>
                                 </TabContent>
