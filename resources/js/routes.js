@@ -8,6 +8,7 @@ import Login from './pages/auth/Login.vue'
 import Grades from './pages/grades/ListGrades.vue'
 import ClassRooms from './pages/classRooms/ListClassRooms.vue'
 import Sections from './pages/sections/listSections.vue'
+import Parents from './pages/parents/ListParents.vue'
 export default[
     {
         path: '/admin/dashboard',
@@ -76,6 +77,11 @@ export default[
         path: '/admin/sections',
         name: 'admin.sections',
         component: Sections,
+    },
+{
+        path: '/admin/parents',
+        name: 'admin.parents',
+        component: Parents,
     },
 
 ]

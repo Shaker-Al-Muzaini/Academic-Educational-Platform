@@ -100,9 +100,18 @@ const logout = () => {
 
                             <li class="nav-item">
                                 <router-link to="/admin/sections" active-class="active" class="nav-link">
-                                    <i class="nav-icon  fas fa-chalkboard"></i>
+                                    <i class="nav-icon  nav-icon fas fa-book"></i>
                                     <p>
                                         Sections
+                                    </p>
+                                </router-link>
+                            </li>
+
+                            <li class="nav-item">
+                                <router-link to="/admin/parents" active-class="active" class="nav-link">
+                                    <i class="nav-icon  nav-icon fas fa-book"></i>
+                                    <p>
+                                        Parents
                                     </p>
                                 </router-link>
                             </li>

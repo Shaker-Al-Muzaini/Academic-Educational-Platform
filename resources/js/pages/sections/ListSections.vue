@@ -221,6 +221,38 @@ const deletes = (id) => {
     });
 };
 
+const colors = [
+    'bg-primary text-white',
+    'bg-secondary text-white',
+    'bg-success text-white',
+    'bg-danger text-white',
+    'bg-warning text-dark',
+    'bg-info text-white',
+    'bg-light text-dark',
+    'bg-dark text-white',
+    'bg-white text-dark',
+];
+
+const getRandomColor = () => {
+    if (colors.length === 0) {
+        // إعادة تعيين القائمة عندما تصبح فارغة لاستخدام الألوان مرة أخرى
+        colors.push(
+            'bg-primary text-white',
+            'bg-secondary text-white',
+            'bg-success text-white',
+            'bg-danger text-white',
+            'bg-warning text-dark',
+            'bg-info text-white',
+            'bg-light text-dark',
+            'bg-dark text-white',
+            'bg-white text-dark',
+        );
+    }
+    // اختيار لون عشوائي وإزالته من القائمة
+    const randomIndex = Math.floor(Math.random() * colors.length);
+    return colors.splice(randomIndex, 1)[0];
+};
+
 onMounted(() => {
     getSections();
     getGrade();
@@ -255,8 +287,8 @@ onMounted(() => {
                 </div>
             </div>
         </div>
-        <div class="card" v-for="grade in grades.data" :key="grade.id">
-            <div class="card-header" data-card-widget="collapse" style="cursor: pointer">
+        <div class="card" v-for="(grade, index) in grades.data" :key="grade.id">
+            <div :class="getRandomColor() + ' card-header'" data-card-widget="collapse" style="cursor: pointer">
                 <h3 class="card-title">{{ grade.name }}</h3>
                 <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">

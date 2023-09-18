@@ -25,6 +25,7 @@
         "vue": "^3.3.4",
         "vue-route": "^1.5.1",
         "vue-router": "^4.2.4",
+        "vue3-form-wizard": "^0.2.1",
         "yup": "^1.2.0"
     }
 }
