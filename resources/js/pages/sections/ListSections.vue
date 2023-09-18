@@ -45,15 +45,13 @@ const createSchema = yup.object({
 const create = (values, { resetForm, setErrors }) => {
     axios.post('/api/createSections', values)
         .then((response) => {
-            // التحقق من البيانات في الاستجابة واستخدام المفتاح الصحيح
             const gradeId = response.data.grade_id;
             const sectionToAdd = response.data;
 
-            // البحث عن الصف الصحيح في grades.value.data
+
             const gradeIndex = grades.value.data.findIndex(grade => grade.id === gradeId);
 
             if (gradeIndex !== -1) {
-                // إضافة القسم الجديد إلى الصف الصحيح
                 grades.value.data[gradeIndex].sections.unshift(sectionToAdd);
             }
             $('#FormModal').modal('hide');
@@ -117,16 +115,13 @@ const update = (values, { setErrors }) => {
     axios.put('/api/grade_sections/' + formValues.value.id, values)
         .then((response) => {
             const updatedSection = response.data;
-            const sourceGradeId = formValues.value.grade_id; // معرف المرحلة المصدرة
-            const destinationGradeId = values.grade_id; // معرف المرحلة الهدفة
+            const sourceGradeId = formValues.value.grade_id;
+            const destinationGradeId = values.grade_id;
 
-            // استدعاء دالة النقل
             moveSectionToAnotherGrade(updatedSection.id, sourceGradeId, destinationGradeId);
 
-            // تحديث اسم المرحلة في الواجهة المستخدم بعد نجاح النقل
             updateGradeName(destinationGradeId, destinationGrade.name);
 
-            // تحديث اسم القسم في الواجهة المستخدم بعد نجاح النقل
             updateSectionName(updatedSection.id, updatedSection.name);
 
             $('#FormModal').modal('hide');
