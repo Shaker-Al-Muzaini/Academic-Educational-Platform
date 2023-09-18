@@ -222,30 +222,21 @@ const deletes = (id) => {
 };
 
 const colors = [
-    'bg-primary text-white',
-    'bg-secondary text-white',
-    'bg-success text-white',
-    'bg-danger text-white',
-    'bg-warning text-dark',
-    'bg-info text-white',
-    'bg-light text-dark',
-    'bg-dark text-white',
-    'bg-white text-dark',
+    'bg-primary ',
+    'bg-success ',
+    'bg-danger ',
+    'bg-warning',
+    'bg-info ',
 ];
 
 const getRandomColor = () => {
     if (colors.length === 0) {
-        // إعادة تعيين القائمة عندما تصبح فارغة لاستخدام الألوان مرة أخرى
         colors.push(
-            'bg-primary text-white',
-            'bg-secondary text-white',
-            'bg-success text-white',
-            'bg-danger text-white',
-            'bg-warning text-dark',
-            'bg-info text-white',
-            'bg-light text-dark',
-            'bg-dark text-white',
-            'bg-white text-dark',
+            'bg-primary ',
+            'bg-success ',
+            'bg-danger ',
+            'bg-warning',
+            'bg-info ',
         );
     }
     // اختيار لون عشوائي وإزالته من القائمة
