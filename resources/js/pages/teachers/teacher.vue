@@ -163,7 +163,7 @@ const bulkDelete = () => {
             toastr.success(response.data.message);
         });
 };
-
+//selectAllUsers
 const selectAllUsers = () => {
     if (selectAll.value) {
         selectedUsers.value = classRooms.value.data.map(classRoom => classRoom.id);
