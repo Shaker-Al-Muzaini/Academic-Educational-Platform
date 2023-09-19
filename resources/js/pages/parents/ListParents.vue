@@ -147,19 +147,21 @@ onMounted(() => {
                                     </Form>
                                 </TabContent>
                                 <TabContent title="Mother details" icon="fa fa-gear">
-                                    <Form @submit="createAppointment" v-slot:default="{ errors }">
+                                    <Form @submit="createAppointment"  v-slot:default="{ errors }">
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="email_mother">Email</label>
-                                                    <input id="email_mother" type="email" v-model="form.email_mother" class="form-control" :class="{ 'is-invalid': errors.email_mother }" placeholder="Enter email Mother">
+                                                    <Field name="email_mother" type="email" class="form-control" :class="{ 'is-invalid': errors.email_mother }"
+                                                           id="email_mother" aria-describedby="email_motherHelp" placeholder="Enter full email mother" />
                                                     <span class="invalid-feedback">{{ errors.email_mother }}</span>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="password_mother">Password</label>
-                                                    <input id="password_mother" type="password" v-model="form.password_mother" class="form-control" :class="{ 'is-invalid': errors.password_mother }">
+                                                    <Field name="password_mother" type="password" class="form-control" :class="{ 'is-invalid': errors.password_mother }"
+                                                           id="password_mother" aria-describedby="password_motherHelp" placeholder="Enter full  password mother" />
                                                     <span class="invalid-feedback">{{ errors.password_mother }}</span>
                                                 </div>
                                             </div>
@@ -168,24 +170,27 @@ onMounted(() => {
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="nameMother">Name_Mother</label>
-                                                    <input id="nameMother" type="text" v-model="form.Name_Mother" class="form-control" :class="{ 'is-invalid': errors.Name_Mother }">
+                                                    <Field name="Name_Mother" type="text" class="form-control" :class="{ 'is-invalid': errors.Name_Mother }"
+                                                           id="Name_Mother" aria-describedby="Name_Mother" placeholder="Enter full Name Mother" />
                                                     <span class="invalid-feedback">{{ errors.Name_Mother }}</span>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="jobMother">Job_Mother</label>
-                                                    <input id="jobMother" type="text" v-model="form.Job_Mother" class="form-control" :class="{ 'is-invalid': errors.Job_Mother }">
+                                                    <Field name="Job_Mother" type="text" class="form-control" :class="{ 'is-invalid': errors.Job_Mother }"
+                                                           id="Job_Mother" aria-describedby="Job_Mother" placeholder="Enter full Job Mother" />
                                                     <span class="invalid-feedback">{{ errors.Job_Mother }}</span>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="nationalityMother">Nationality_Mother</label>
-                                                    <select id="nationalityMother" v-model="form.Nationality_Mother_id" class="custom-select" :class="{ 'is-invalid': errors.Nationality_Mother_id }">
+                                                    <Field name="Nationality_Mother_id" as="select" class="form-control" :class="{ 'is-invalid': errors.Nationality_Mother_id }"
+                                                           id="Nationality_Mother_id">
                                                         <option selected disabled>اختر الجنسية</option>
-                                                        <option value="2">فلسطين</option>
-                                                    </select>
+                                                        <option value="1">فلسطين</option>
+                                                    </Field>
                                                     <span class="invalid-feedback">{{ errors.Nationality_Mother_id }}</span>
                                                 </div>
                                             </div>
@@ -194,21 +199,24 @@ onMounted(() => {
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="Phone_Mother">Phone_Mother</label>
-                                                    <input id="Phone_Mother" type="text" v-model="form.Phone_Mother" class="form-control" :class="{ 'is-invalid': errors.Phone_Mother }">
+                                                    <Field name="Phone_Mother" type="text" class="form-control" :class="{ 'is-invalid': errors.Phone_Mother }"
+                                                           id="Phone_Mother" aria-describedby="Phone_Mother" placeholder="Enter full Phone Mother" />
                                                     <span class="invalid-feedback">{{ errors.Phone_Mother }}</span>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="National_ID_Mother">National_ID_Mother</label>
-                                                    <input id="National_ID_Mother" type="text" v-model="form.National_ID_Mother" class="form-control" :class="{ 'is-invalid': errors.National_ID_Mother }">
+                                                    <Field name="National_ID_Mother" type="text" class="form-control" :class="{ 'is-invalid': errors.National_ID_Mother }"
+                                                           id="National_ID_Mother" aria-describedby="National_ID_MotherHelp" placeholder="Enter full National_ID_Mother" />
                                                     <span class="invalid-feedback">{{ errors.National_ID_Mother }}</span>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label for="addressMother">Address_Mother</label>
-                                            <textarea id="addressMother" v-model="form.Address_Mother" class="form-control" :class="{ 'is-invalid': errors.Address_Mother }" rows="4"></textarea>
+                                            <Field as="textarea" name="Address_Mother"  class="form-control"
+                                                   :class="{ 'is-invalid': errors.Address_Mother }" id="Address_Mother" placeholder="Enter Address_Mother"/>
                                             <span class="invalid-feedback">{{ errors.Address_Mother }}</span>
                                         </div>
                                     </Form>

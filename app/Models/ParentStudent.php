@@ -34,22 +34,22 @@ class ParentStudent extends Model
     protected static function rules(): array
     {
         return ([
-            'email_mother' => 'required',
-            'password_mother' => 'required',
-            'password_Father' => 'required',
-            'email_Father' => 'required',
-            'Name_Father' => 'required',
-            'National_ID_Father' => 'required',
-            'Phone_Father' => 'required',
-            'Job_Father' => 'required',
-            'Nationality_Father_id' => 'required',
-            'Address_Father' => 'required',
-            'Name_Mother' => 'required',
-            'National_ID_Mother' => 'required',
-            'Phone_Mother' => 'required',
-            'Job_Mother' => 'required',
-            'Address_Mother' => 'required',
-            'Nationality_Mother_id' => '',
+            'email_mother' => 'nullable',
+            'password_mother' => 'nullable',
+            'password_Father' => 'nullable',
+            'email_Father' => 'nullable',
+            'Name_Father' => 'nullable',
+            'National_ID_Father' => 'nullable',
+            'Phone_Father' => 'nullable',
+            'Job_Father' => 'nullable',
+            'Nationality_Father_id' => 'nullable',
+            'Address_Father' => 'nullable',
+            'Name_Mother' => 'nullable',
+            'National_ID_Mother' => 'nullable',
+            'Phone_Mother' => 'nullable',
+            'Job_Mother' => 'nullable',
+            'Address_Mother' => 'nullable',
+            'Nationality_Mother_id' => 'nullable',
         ]);
 
     }
