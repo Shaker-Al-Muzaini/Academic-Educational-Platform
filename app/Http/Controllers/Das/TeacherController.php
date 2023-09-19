@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Das;
 
 use App\Http\Controllers\Controller;
-use App\Models\ClassRoom;
 use App\Models\gender;
 use App\Models\specialization;
 use App\Models\Teacher;

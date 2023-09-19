@@ -18,7 +18,7 @@ const Teachers = ref();
 const getSections = (page = 1) => {
     axios.get(`/api/grade_sections/?page=${page}`)
         .then((response) => {
-            grades.value = response.data[0];
+            grades.value = response.data;
         })
 };
 
@@ -35,10 +35,6 @@ const getTeacher = () => {
             Teachers.value = response.data;
         })
 };
-const getTeacherName = (TeacherId) => {
-    const Teacher = Teachers.value.find(Teacher => Teacher.id === TeacherId);
-    return Teacher ? Teacher.Name : 'TeacherNmae';
-}
 
 const getClass_room = () => {
     axios.get('/api/classRoom')
@@ -91,7 +87,7 @@ const editSchema = yup.object({
     teacher_id: yup.string().required(),
 });
 
-const edit = (section ) => {
+const edit = (section) => {
     editing.value = true;
     form.value.resetForm();
     $('#FormModal').modal('show');
@@ -99,6 +95,7 @@ const edit = (section ) => {
         id: section.id,
         name: section.name,
         grade_id: section.grade_id,
+        teacher_id: section.teacher_id,
         class_room_id: section.class_room_id,
     };
 };
@@ -377,7 +374,7 @@ onMounted(() => {
                         </div>
                         <div class="form-group">
                             <label for="teacher_id">Teacher Name</label>
-                            <Field  name="teacher_id" as="select" class="form-control" :class="{ 'is-invalid': errors.teacher_id }"
+                            <Field name="teacher_id" as="select" class="form-control" :class="{ 'is-invalid': errors.teacher_id }"
                                    id="teacher_id">
                                 <option v-for="Teacher in Teachers" :value="Teacher.id" :key="Teacher.id">{{Teacher.name}}</option>
                             </Field>

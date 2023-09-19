@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -36,6 +37,13 @@ class Teacher extends Model
     public function specializations()
     {
         return $this->belongsTo(specialization::class, 'specialization_id');
+    }
+
+    public function formatted_joining_Date(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->joining_Date->format('Y-m-d h:i A'),
+        );
     }
 
     // علاقة بين المعلمين والانواع لجلب جنس المعلم

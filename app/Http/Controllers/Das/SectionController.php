@@ -20,8 +20,8 @@ class SectionController extends Controller
         $sections= Grades::with('sections.My_class')
             ->latest()
             ->paginate(\setting(('pagination_limit')));
-            $teachers = Teacher::all();
-        return response()->json([$sections,$teachers]);
+
+        return $sections;
     }
 
     public function store(Request $request)
