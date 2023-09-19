@@ -30,12 +30,25 @@ class ParentStudentController extends Controller
     {
         // validate
         $validated =request()->validate(ParentStudent::rules());
-
-
-        return Grades::create([
-            'name' => $validated['name'],
-            'notes' => $validated['notes'],
+        return ParentStudent::create([
+            'email_mother' => $validated['email_mother'],
+            'password_mother' => $validated['password_mother'],
+            'password_Father' => $validated['password_Father'],
+            'email_Father' => $validated['email_Father'],
+            'Name_Father' => $validated['Name_Father'],
+            'National_ID_Father' => $validated['National_ID_Father'],
+            'Phone_Father' => $validated['Phone_Father'],
+            'Job_Father' => $validated['Job_Father'],
+            'Nationality_Father_id' => $validated['Nationality_Father_id'],
+            'Address_Father' => $validated['Address_Father'],
+            'Name_Mother' => $validated['Name_Mother'],
+            'National_ID_Mother' => $validated['National_ID_Mother'],
+            'Phone_Mother' => $validated['Phone_Mother'],
+            'Job_Mother' => $validated['Job_Mother'],
+            'Nationality_Mother_id' => $validated['Nationality_Mother_id'],
+            'Address_Mother' => $validated['Address_Mother'],
         ]);
+
     }
 
     /**

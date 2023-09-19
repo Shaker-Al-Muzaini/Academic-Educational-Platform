@@ -6,6 +6,7 @@ use App\Http\Controllers\Das\AppointmentController;
 use App\Http\Controllers\Das\ClassRoomController;
 use App\Http\Controllers\Das\ClientController;
 use App\Http\Controllers\Das\GradesController;
+use App\Http\Controllers\Das\ParentStudentController;
 use App\Http\Controllers\Das\ProfileController;
 use App\Http\Controllers\Das\SectionController;
 use App\Http\Controllers\Das\SettingController;
@@ -82,10 +83,15 @@ Route::middleware('auth')->group(function () {
     Route::delete('/api/classRooms/', [ClassRoomController::class, 'bulkDelete']);
 
    //Sections
-//    Route::get('/api/grade_sections', [SectionController::class, 'index']);
+    Route::get('/api/grade_sections', [SectionController::class, 'index']);
     Route::post('/api/createSections', [SectionController::class, 'store']);
     Route::put('/api/grade_sections/{section}', [SectionController::class, 'update']);
     Route::delete('/api/grade_sections/{section}', [SectionController::class, 'destroy']);
+
+    //ParentStudent
+
+    Route::post('/api/createParentStudent', [ParentStudentController::class, 'store']);
+
 
 
 

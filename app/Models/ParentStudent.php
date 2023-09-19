@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @method static create(array $array)
+ */
 class ParentStudent extends Model
 {
     use HasFactory;
@@ -12,6 +15,8 @@ class ParentStudent extends Model
     protected $fillable=[
         'email_mother',
         'password_mother',
+        'password_Father',
+        'email_Father',
         'Name_Father',
         'National_ID_Father',
         'Phone_Father',
@@ -31,6 +36,8 @@ class ParentStudent extends Model
         return ([
             'email_mother' => 'required',
             'password_mother' => 'required',
+            'password_Father' => 'required',
+            'email_Father' => 'required',
             'Name_Father' => 'required',
             'National_ID_Father' => 'required',
             'Phone_Father' => 'required',
@@ -41,7 +48,8 @@ class ParentStudent extends Model
             'National_ID_Mother' => 'required',
             'Phone_Mother' => 'required',
             'Job_Mother' => 'required',
-            'Nationality_Mother_id' => 'required',
+            'Address_Mother' => 'required',
+            'Nationality_Mother_id' => '',
         ]);
 
     }

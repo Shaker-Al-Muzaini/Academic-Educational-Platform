@@ -20,5 +20,5 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::get('/grade_sections', [SectionController::class, 'index']);
+//Route::get('/grade_sections', [SectionController::class, 'index']);
 //Route::get('/classRooms', [ClassRoomController::class, 'index']);
