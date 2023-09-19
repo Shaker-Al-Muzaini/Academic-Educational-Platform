@@ -84,7 +84,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/api/classRooms/', [ClassRoomController::class, 'bulkDelete']);
 
    //Sections
-    Route::get('/api/grade_sections', [SectionController::class, 'index']);
+//    Route::get('/api/grade_sections', [SectionController::class, 'index']);
     Route::post('/api/createSections', [SectionController::class, 'store']);
     Route::put('/api/grade_sections/{section}', [SectionController::class, 'update']);
     Route::delete('/api/grade_sections/{section}', [SectionController::class, 'destroy']);
@@ -98,6 +98,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/api/teachers', [TeacherController::class, 'index']);
     Route::get('/api/specializations', [TeacherController::class, 'index2']);
     Route::get('/api/genders', [TeacherController::class, 'index3']);
+    Route::get('/api/Teacher', [TeacherController::class, 'index4']);
+    Route::post('/api/teachers', [TeacherController::class, 'store']);
+    Route::put('/api/teachers/{teacher}', [TeacherController::class, 'update']);
+    Route::delete('/api/teachers/{teacher}', [TeacherController::class, 'destroy']);
+
+
+
+
 
 
 

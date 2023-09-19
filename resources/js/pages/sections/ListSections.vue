@@ -13,11 +13,12 @@ const class_rooms = ref();
 const formValues = ref();
 const form = ref(null);
 const editing = ref(false);
+const Teachers = ref();
 
 const getSections = (page = 1) => {
     axios.get(`/api/grade_sections/?page=${page}`)
         .then((response) => {
-            grades.value = response.data;
+            grades.value = response.data[0];
         })
 };
 
@@ -27,6 +28,17 @@ const getGrade = () => {
             gradeing.value = response.data;
         })
 };
+
+const getTeacher = () => {
+    axios.get('/api/Teacher')
+        .then((response) => {
+            Teachers.value = response.data;
+        })
+};
+const getTeacherName = (TeacherId) => {
+    const Teacher = Teachers.value.find(Teacher => Teacher.id === TeacherId);
+    return Teacher ? Teacher.Name : 'TeacherNmae';
+}
 
 const getClass_room = () => {
     axios.get('/api/classRoom')
@@ -40,6 +52,7 @@ const createSchema = yup.object({
     name: yup.string().required(),
     grade_id: yup.string().required(),
     class_room_id: yup.string().required(),
+    teacher_id: yup.string().required(),
 });
 
 const create = (values, { resetForm, setErrors }) => {
@@ -75,9 +88,10 @@ const editSchema = yup.object({
     name: yup.string().required(),
     grade_id: yup.string().required(),
     class_room_id: yup.string().required(),
+    teacher_id: yup.string().required(),
 });
 
-const edit = (section) => {
+const edit = (section ) => {
     editing.value = true;
     form.value.resetForm();
     $('#FormModal').modal('show');
@@ -243,6 +257,7 @@ onMounted(() => {
     getSections();
     getGrade();
     getClass_room();
+    getTeacher();
 });
 </script>
 
@@ -359,7 +374,14 @@ onMounted(() => {
                                 <option v-for="class_room in class_rooms" :value="class_room.id" :key="class_room.id">{{class_room.name_class}}</option>
                             </Field>
                             <span class="invalid-feedback">{{ errors.class_room_id }}</span>
-
+                        </div>
+                        <div class="form-group">
+                            <label for="teacher_id">Teacher Name</label>
+                            <Field  name="teacher_id" as="select" class="form-control" :class="{ 'is-invalid': errors.teacher_id }"
+                                   id="teacher_id">
+                                <option v-for="Teacher in Teachers" :value="Teacher.id" :key="Teacher.id">{{Teacher.name}}</option>
+                            </Field>
+                            <span class="invalid-feedback">{{ errors.teacher_id }}</span>
                         </div>
 
                     </div>

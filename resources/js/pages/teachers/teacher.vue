@@ -6,6 +6,8 @@ import { Bootstrap4Pagination } from 'laravel-vue-pagination';
 import * as yup from 'yup';
 import axios from 'axios';
 import { useToastr } from '../../toastr.js';
+import flatpickr from "flatpickr";
+import 'flatpickr/dist/themes/light.css';
 
 const toastr = useToastr();
 const teachers =  ref({'data': []});
@@ -14,15 +16,11 @@ const form = ref(null);
 const editing = ref(false);
 const genders = ref();
 const specializations = ref();
-const selectedUsers = ref([]);
-const selectAll = ref(false);
 
 const getTeachers = (page = 1) => {
     axios.get(`/api/teachers/?page=${page}`)
         .then((response) => {
             teachers.value = response.data;
-            selectedUsers.value = [];
-            selectAll.value = false;
         })
 };
 
@@ -42,28 +40,32 @@ const getSpecialization = () => {
 
 //Craeteting
 
-const createClassRoomSchema = yup.object({
-    name_class: yup.string().required(),
-    grade_id: yup.string().required(),
+const createTeacherSchema = yup.object({
+    email: yup.string().required().email(),
+    Gender_id: yup.string().required(),
+    specialization_id: yup.string().required(),
+    name: yup.string().required(),
+    password: yup.string().required().min(8),
+    address: yup.string().required(),
+    joining_Date: yup.string().required(),
 });
 
-const createClassRooms = (values, { resetForm, setErrors }) => {
-    axios.post('/api/createClassRooms', values)
+const createTeacher = (values, { resetForm, setErrors }) => {
+    axios.post('/api/teachers', values)
         .then((response) => {
-            classRooms.value.data.unshift(response.data);
-            $('#classRoomsFormModal').modal('hide');
+            teachers.value.data.unshift(response.data);
+            $('#teacherFormModal').modal('hide');
             resetForm();
-            toastr.success('ClassRooms created successfully!');
+            toastr.success('teacher created successfully!');
         })
         .catch((error) => {
-            if (error.response.data.errors) {
-                setErrors(error.response.data.errors);
-            }
+            setErrors(error.response.data.errors);
+            console.log(error);
         })
 };
-const addClassRooms = () => {
+const addTeacher = () => {
     editing.value = false;
-    $('#classRoomsFormModal').modal('show');
+    $('#teacherFormModal').modal('show');
 };
 
 
@@ -73,28 +75,39 @@ const addClassRooms = () => {
 
 //editing
 
-const editClassRoomsSchema = yup.object({
-    name_class: yup.string().required(),
-    grade_id: yup.string().required(),
+const editTeacherSchema = yup.object({
+    email: yup.string().required().email(),
+    Gender_id: yup.string().required(),
+    specialization_id: yup.string().required(),
+    name: yup.string().required(),
+    password: yup.string().required().min(8),
+    address: yup.string().required(),
+    joining_Date: yup.string().required(),
 });
 
-const editClassRooms = (classRoom) => {
+const editTeacher = (teacher) => {
     editing.value = true;
     form.value.resetForm();
-    $('#classRoomsFormModal').modal('show');
+    $('#teacherFormModal').modal('show');
     formValues.value = {
-        id: classRoom.id,
-        name_class: classRoom.name_class,
-        grade_id: classRoom.grade_id,
+        id: teacher.id,
+        email: teacher.email,
+        name: teacher.name,
+        Gender_id: teacher.Gender_id,
+        specialization_id: teacher.specialization_id,
+        password: teacher.password,
+        address: teacher.address,
+        joining_Date: teacher.joining_Date,
+
     };
 };
-const updateClassRooms = (values, { setErrors }) => {
-    axios.put('/api/classRooms/'+ formValues.value.id, values)
+const updateTeacher = (values, { setErrors }) => {
+    axios.put('/api/teachers/'+ formValues.value.id, values)
         .then((response) => {
-            const index = classRooms.value.data.findIndex(classRoom => classRoom.id === response.data.id);
-            classRooms.value.data[index] = response.data;
-            $('#classRoomsFormModal').modal('hide');
-            toastr.success('ClassRoom updated successfully!');
+            const index = teachers.value.data.findIndex(teacher => teacher.id === response.data.id);
+            teachers.value.data[index] = response.data;
+            $('#teacherFormModal').modal('hide');
+            toastr.success('teachers updated successfully!');
         }).catch((error) => {
         setErrors(error.response.data.errors);
         console.log(error);
@@ -103,9 +116,9 @@ const updateClassRooms = (values, { setErrors }) => {
 const handleSubmit = (values, actions) => {
     // console.log(actions);
     if (editing.value) {
-        updateClassRooms(values, actions);
+        updateTeacher(values, actions);
     } else {
-        createClassRooms(values, actions);
+        createTeacher(values, actions);
     }
 }
 //  حل مشكلة تحديث الجداول  تلقائي بسب العِلاقة
@@ -117,7 +130,7 @@ const getSpecializationName = (specializationId) => {
     const specialization = specializations.value.find(specialization => specialization.id === specializationId);
     return specialization ? specialization.Name : 'specializationNmae';
 }
-const deleteclassRoom = (id) => {
+const deleteTeacher = (id) => {
     Swal.fire({
         title: 'Are you sure?',
         text: "You won't be able to revert this!",
@@ -128,9 +141,9 @@ const deleteclassRoom = (id) => {
         confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
         if (result.isConfirmed) {
-            axios.delete(`/api/classRooms/${id}`)
+            axios.delete(`/api/teachers/${id}`)
                 .then((response) => {
-                    classRooms.value.data = classRooms.value.data.filter(classRoom => classRoom.id !== id);
+                    teachers.value.data = teachers.value.data.filter(teacher => teacher.id !== id);
                     Swal.fire(
                         'Deleted!',
                         'Your file has been deleted.',
@@ -140,43 +153,21 @@ const deleteclassRoom = (id) => {
         }
     })
 };
-const toggleSelection = (classRoom) => {
-    const index = selectedUsers.value.indexOf(classRoom.id);
-    if (index === -1) {
-        selectedUsers.value.push(classRoom.id);
-    } else {
-        selectedUsers.value.splice(index, 1);
-    }
-    console.log(selectedUsers.value);
-};
 
-const bulkDelete = () => {
-    axios.delete('/api/classRooms', {
-        data: {
-            ids: selectedUsers.value
-        }
-    })
-        .then(response => {
-            classRooms.value.data = classRooms.value.data.filter(classRoom => !selectedUsers.value.includes(classRoom.id));
-            selectedUsers.value = [];
-            selectAll.value = false;
-            toastr.success(response.data.message);
-        });
-};
-//selectAllUsers
-const selectAllUsers = () => {
-    if (selectAll.value) {
-        selectedUsers.value = classRooms.value.data.map(classRoom => classRoom.id);
-    } else {
-        selectedUsers.value = [];
-    }
-    console.log(selectedUsers.value);
-}
+
 
 onMounted(() => {
     getTeachers();
     getGender();
+    flatpickr(".flatpickr", {
+        enableTime: true,
+        dateFormat: "Y-m-d H:i",
+        defaultHour: 10,
+        time_24hr: false,
+    });
     getSpecialization();
+
+
 });
 </script>
 <template>
@@ -202,19 +193,10 @@ onMounted(() => {
             <div class="d-flex justify-content-between">
 
                 <div class="d-flex">
-                    <button @click="addClassRooms" type="button" class="mb-2 btn btn-primary">
+                    <button @click="addTeacher" type="button" class="mb-2 btn btn-primary">
                         <i class="fa fa-plus-circle mr-1"></i>
                         Add New ClassRoom
                     </button>
-
-
-                    <div  v-if="selectedUsers.length > 0">
-                        <button @click="bulkDelete" type="button" class="ml-2 mb-2 btn btn-danger">
-                            <i class="fa fa-trash mr-1"></i>
-                            Delete Selected
-                        </button>
-                        <span class="ml-2">Selected {{ selectedUsers.length }} users</span>
-                    </div>
                 </div>
             </div>
             <div class="card">
@@ -222,8 +204,6 @@ onMounted(() => {
                     <table class="table table-bordered">
                         <thead>
                         <tr>
-
-                            <th><input type="checkbox" v-model="selectAll" @change="selectAllUsers" /></th>
                             <th style="width: 10px">#</th>
                             <th scope="col">Teacher Name</th>
                             <th scope="col">Gender Type</th>
@@ -234,16 +214,15 @@ onMounted(() => {
                         </thead>
                         <tbody>
                         <tr v-for="(teacher, index) in teachers.data" :key="teacher.id">
-                            <td style="width: 0px"></td>
                             <td>{{ index + 1 }}</td>
                             <td>{{ teacher.name }}</td>
                             <td>{{ getGenderName(teacher.Gender_id) }}</td>
                             <td>{{ getSpecializationName(teacher.specialization_id) }}</td>
                             <td>{{teacher.joining_Date}}</td>
                             <td>
-                                <a  href="#" @click.prevent="editClassRooms(teacher)"><i class="fa fa-edit mr-1"></i></a>
+                                <a  href="#" @click.prevent="editTeacher(teacher)"><i class="fa fa-edit mr-1"></i></a>
 
-                                <a  href="#" @click.prevent="deleteclassRoom(teacher.id)">
+                                <a  href="#" @click.prevent="deleteTeacher(teacher.id)">
                                     <i class="fa fa-trash text-danger ml-1"></i>
                                 </a>
                             </td>
@@ -257,38 +236,79 @@ onMounted(() => {
         </div>
     </div>
 
-    <div class="modal fade" id="classRoomsFormModal" data-backdrop="static" tabindex="-1" role="dialog"
+    <div class="modal fade" id="teacherFormModal" data-backdrop="static" tabindex="-1" role="dialog"
          aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="staticBackdropLabel">
-                        <span v-if="editing">Edit ClassRoom</span>
-                        <span v-else>Add New ClassRoom</span>
+                        <span v-if="editing">Edit Teacher</span>
+                        <span v-else>Add New Teacher</span>
                     </h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <Form ref="form" @submit="handleSubmit" :validation-schema="editing ? editClassRoomsSchema : createClassRoomSchema"
+                <Form ref="form" @submit="handleSubmit" :validation-schema="editing ? editTeacherSchema : createTeacherSchema"
                       v-slot="{ errors }" :initial-values="formValues">
                     <div class="modal-body">
-                        <div class="form-group">
-                            <label for="name_class">ClassRoom Name </label>
-                            <Field name="name_class" type="text" class="form-control" :class="{ 'is-invalid': errors.name_class }"
-                                   id="name_class"  placeholder="Enter full ClassRoom Name" />
-                            <span class="invalid-feedback">{{ errors.name_class }}</span>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="email">Teacher email </label>
+                                    <Field name="email" type="email" class="form-control" :class="{ 'is-invalid': errors.email }"
+                                           id="email"  placeholder="Enter full Teacher email" />
+                                    <span class="invalid-feedback">{{ errors.email }}</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="password">Teacher password </label>
+                                <Field name="password" type="password" class="form-control" :class="{ 'is-invalid': errors.password }"
+                                       id="password"  placeholder="Enter full Teacher password" />
+                                <span class="invalid-feedback">{{ errors.password }}</span>
+                            </div>
                         </div>
-
-
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="name">Teacher Name </label>
+                                    <Field name="name" type="text" class="form-control" :class="{ 'is-invalid': errors.name }"
+                                           id="name"  placeholder="Enter full Teacher Name" />
+                                    <span class="invalid-feedback">{{ errors.Name }}</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="address">Teacher Address </label>
+                                <Field name="address" type="text" class="form-control" :class="{ 'is-invalid': errors.address }"
+                                       id="address"  placeholder="Enter full Teacher Address" />
+                                <span class="invalid-feedback">{{ errors.address }}</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="Gender_id">Gender Name</label>
+                                    <Field name="Gender_id" as="select" class="form-control" :class="{ 'is-invalid': errors.Gender_id }"
+                                           id="Gender_id">
+                                        <option v-for="gender in genders" :value="gender.id" :key="gender.id">{{gender.Name}}</option>
+                                    </Field>
+                                    <span class="invalid-feedback">{{ errors.Gender_id }}</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="specialization_id">Specialization Name</label>
+                                <Field name="specialization_id" as="select" class="form-control" :class="{ 'is-invalid': errors.specialization_id }"
+                                       id="specialization_id">
+                                    <option v-for="specialization in specializations" :value="specialization.id" :key="specialization.id">{{specialization.Name}}</option>
+                                </Field>
+                                <span class="invalid-feedback">{{ errors.specialization_id }}</span>
+                            </div>
+                        </div>
                         <div class="form-group">
-                            <label for="email">Grade Name</label>
-                            <Field name="grade_id" as="select" class="form-control" :class="{ 'is-invalid': errors.grade_id }"
-                                   id="grade_id">
-                                <option v-for="grade in grades" :value="grade.id" :key="grade.id">{{grade.name}}</option>
-                            </Field>
-                            <span class="invalid-feedback">{{ errors.grade_id }}</span>
-
+                            <label for="joining Date">joining Date</label>
+                            <Field  name="joining_Date"  type="date"  class="form-control flatpickr" :class="{ 'is-invalid': errors.joining_Date }"
+                                   id="joining_Date" />
+                            <span class="invalid-feedback">{{ errors.joining_Date }}</span>
                         </div>
 
                     </div>

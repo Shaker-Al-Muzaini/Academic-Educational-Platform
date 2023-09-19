@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ClassRoom;
 use App\Models\Grades;
 use App\Models\Section;
+use App\Models\Teacher;
 use Illuminate\Http\Request;
 
 class SectionController extends Controller
@@ -19,7 +20,8 @@ class SectionController extends Controller
         $sections= Grades::with('sections.My_class')
             ->latest()
             ->paginate(\setting(('pagination_limit')));
-        return $sections;
+            $teachers = Teacher::all();
+        return response()->json([$sections,$teachers]);
     }
 
     public function store(Request $request)
@@ -29,12 +31,15 @@ class SectionController extends Controller
             'class_room_id.required' => 'The class_room name field is required.',
         ]);
 
-        return Section::create([
+        $Sections= Section::create([
             'class_room_id' => $validated['class_room_id'],
             'grade_id' => $validated['grade_id'],
             'name' => $validated['name'],
             'status' => 1,
         ]);
+        $Sections->teachers()->attach($request->teacher_id);
+        return $Sections;
+
     }
 
 
@@ -51,6 +56,11 @@ class SectionController extends Controller
             'grade_id' => request('grade_id'),
             'class_room_id' => request('class_room_id'),
         ]);
+        if (isset($request->teacher_id)) {
+            $section->teachers()->sync($request->teacher_id);
+        } else {
+            $section->teachers()->sync(array());
+        }
         return $section;
     }
 

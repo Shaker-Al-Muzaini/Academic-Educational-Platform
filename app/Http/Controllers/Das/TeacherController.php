@@ -23,51 +23,46 @@ class TeacherController extends Controller
     }
     public function index2()
     {
-        return gender::latest()->get();
+        return specialization::latest()->get();
     }
     public function index3()
     {
-        return specialization::latest()->get();
+        return gender::latest()->get();
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function index4()
     {
-        //
+        return Teacher::latest()->get();
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+
     public function store(Request $request)
     {
-        //
+        $validated =request()->validate(Teacher::rules());
+
+        return Teacher::create([
+            'email' => $validated['email'],
+            'Gender_id' => $validated['Gender_id'],
+            'specialization_id' => $validated['specialization_id'],
+            'name' => $validated['name'],
+            'password' => $validated['password'],
+            'address' => $validated['address'],
+            'joining_Date' => $validated['joining_Date'],
+        ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Teacher $teacher)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Teacher $teacher)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Teacher $teacher)
     {
-        //
+        $teacher->update([
+            'email' => $request['email'],
+            'Gender_id' => $request['Gender_id'],
+            'specialization_id' => $request['specialization_id'],
+            'name' => $request['name'],
+            'password' => $request['password'],
+            'address' => $request['address'],
+            'joining_Date' => $request['joining_Date'],
+        ]);
+        return $teacher;
     }
 
     /**
@@ -75,6 +70,14 @@ class TeacherController extends Controller
      */
     public function destroy(Teacher $teacher)
     {
-        //
+        $teacher->delete();
+
+        return response()->json(['success' => true], 200);
+    }
+
+    public  function bulkDelete(){
+        Teacher::whereIn('id', request('ids'))->delete();
+        return response()->json(['message' => 'Teacher deleted successfully!']);
+
     }
 }
