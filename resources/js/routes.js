@@ -9,7 +9,7 @@ import Grades from './pages/grades/ListGrades.vue'
 import ClassRooms from './pages/classRooms/ListClassRooms.vue'
 import Sections from './pages/sections/listSections.vue'
 import Parents from './pages/parents/ListParents.vue'
-import Testing from './pages/testing/test.vue'
+import Teacher from './pages/teachers/teacher.vue'
 export default[
     {
         path: '/admin/dashboard',
@@ -85,9 +85,9 @@ export default[
         component: Parents,
     },
     {
-        path: '/admin/test',
-        name: 'admin.test',
-        component: Testing,
+        path: '/admin/teacher',
+        name: 'admin.teacher',
+        component: Teacher,
     },
 
 ]

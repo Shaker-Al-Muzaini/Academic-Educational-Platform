@@ -10,6 +10,7 @@ use App\Http\Controllers\Das\ParentStudentController;
 use App\Http\Controllers\Das\ProfileController;
 use App\Http\Controllers\Das\SectionController;
 use App\Http\Controllers\Das\SettingController;
+use App\Http\Controllers\Das\TeacherController;
 use App\Http\Controllers\Das\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -91,6 +92,13 @@ Route::middleware('auth')->group(function () {
     //ParentStudent
 
     Route::post('/api/createParentStudent', [ParentStudentController::class, 'store']);
+
+
+    //teachers
+    Route::get('/api/teachers', [TeacherController::class, 'index']);
+    Route::get('/api/specializations', [TeacherController::class, 'index2']);
+    Route::get('/api/genders', [TeacherController::class, 'index3']);
+
 
 
 
