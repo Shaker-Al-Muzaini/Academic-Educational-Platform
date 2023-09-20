@@ -10,6 +10,7 @@ use App\Http\Controllers\Das\ParentStudentController;
 use App\Http\Controllers\Das\ProfileController;
 use App\Http\Controllers\Das\SectionController;
 use App\Http\Controllers\Das\SettingController;
+use App\Http\Controllers\Das\StudentController;
 use App\Http\Controllers\Das\TeacherController;
 use App\Http\Controllers\Das\UserController;
 use Illuminate\Support\Facades\Route;
@@ -85,6 +86,7 @@ Route::middleware('auth')->group(function () {
 
    //Sections
     Route::get('/api/grade_sections', [SectionController::class, 'index']);
+    Route::get('/api/sections', [SectionController::class, 'index2']);
     Route::post('/api/createSections', [SectionController::class, 'store']);
     Route::put('/api/grade_sections/{section}', [SectionController::class, 'update']);
     Route::delete('/api/grade_sections/{section}', [SectionController::class, 'destroy']);
@@ -92,6 +94,7 @@ Route::middleware('auth')->group(function () {
     //ParentStudent
 
     Route::post('/api/createParentStudent', [ParentStudentController::class, 'store']);
+    Route::get('/api/ParentStudent', [ParentStudentController::class, 'index']);
 
 
     //teachers
@@ -103,6 +106,12 @@ Route::middleware('auth')->group(function () {
     Route::put('/api/teachers/{teacher}', [TeacherController::class, 'update']);
     Route::delete('/api/teachers/{teacher}', [TeacherController::class, 'destroy']);
 
+
+    //Students
+    Route::get('/api/students', [StudentController::class, 'index']);
+    Route::post('/api/students', [StudentController::class, 'store']);
+    Route::put('/api/students/{student}', [StudentController::class, 'update']);
+    Route::delete('/api/students/{student}', [StudentController::class, 'destroy']);
 
 
 

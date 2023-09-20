@@ -42,7 +42,7 @@ class Teacher extends Model
     public function formatted_joining_Date(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->joining_Date->format('Y-m-d h:i A'),
+            get: fn () => $this->joining_Date->format(setting('date_format')),
         );
     }
 

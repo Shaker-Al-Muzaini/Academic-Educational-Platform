@@ -15,10 +15,19 @@ class TeacherController extends Controller
      */
     public function index()
     {
-        $teachers = Teacher::with('genders:id,Name','specializations:id,Name')
-            ->latest()
-            ->paginate(\setting(('pagination_limit')));
-        return $teachers;
+        $teachers = Teacher::latest()
+            ->paginate(\setting(('pagination_limit')))
+            ->through(fn($teachers)=>[
+                'id'=>$teachers->id,
+                'address'=>$teachers->address,
+                'Gender_id'=>$teachers->Gender_id,
+                'specialization_id'=>$teachers->specialization_id,
+                'name'=>$teachers->name,
+                'password'=>$teachers->password,
+                'email'=>$teachers->email,
+                'joining_Date' => (new \DateTime($teachers->joining_Date))->format('Y-m-d h:i A'),
+            ]);
+        return$teachers ;
     }
     public function index2()
     {
