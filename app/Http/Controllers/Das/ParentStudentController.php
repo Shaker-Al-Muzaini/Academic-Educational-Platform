@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Das;
 
 use App\Http\Controllers\Controller;
-use App\Models\Grades;
 use App\Models\ParentStudent;
 use Illuminate\Http\Request;
 
@@ -12,7 +11,7 @@ class ParentStudentController extends Controller
 
     public function index()
     {
-        //
+        return ParentStudent::latest()->get();
     }
 
     /**

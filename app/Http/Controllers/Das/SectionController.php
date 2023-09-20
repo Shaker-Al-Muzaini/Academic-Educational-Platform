@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\Das;
 
 use App\Http\Controllers\Controller;
-use App\Models\ClassRoom;
 use App\Models\Grades;
 use App\Models\Section;
-use App\Models\Teacher;
 use Illuminate\Http\Request;
 
 class SectionController extends Controller
@@ -22,6 +20,9 @@ class SectionController extends Controller
             ->paginate(\setting(('pagination_limit')));
 
         return $sections;
+    }
+    public  function index2(){
+        return Section::latest()->get();
     }
 
     public function store(Request $request)

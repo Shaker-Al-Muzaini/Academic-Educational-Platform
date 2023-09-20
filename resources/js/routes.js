@@ -10,6 +10,7 @@ import ClassRooms from './pages/classRooms/ListClassRooms.vue'
 import Sections from './pages/sections/listSections.vue'
 import Parents from './pages/parents/ListParents.vue'
 import Teacher from './pages/teachers/teacher.vue'
+import Student from './pages/students/ListStudents.vue'
 export default[
     {
         path: '/admin/dashboard',
@@ -88,6 +89,11 @@ export default[
         path: '/admin/teacher',
         name: 'admin.teacher',
         component: Teacher,
+    },
+{
+        path: '/admin/student',
+        name: 'admin.student',
+        component: Student,
     },
 
 ]
