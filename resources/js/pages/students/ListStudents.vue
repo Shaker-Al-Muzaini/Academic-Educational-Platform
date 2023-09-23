@@ -288,7 +288,7 @@ onMounted(() => {
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <Form ref="form" @submit="handleSubmit" :validation-schema="editing ? editStudentSchema : createStudentSchema"
+                <Form ref="form" enctype="multipart/form-data" @submit="handleSubmit" :validation-schema="editing ? editStudentSchema : createStudentSchema"
                       v-slot="{ errors }" :initial-values="formValues">
                     <div class="modal-body">
                         <div class="row">
@@ -341,7 +341,6 @@ onMounted(() => {
                                 <span class="invalid-feedback">{{ errors.grade_id }}</span>
                             </div>
                         </div>
-
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
@@ -369,7 +368,13 @@ onMounted(() => {
                                 </Field>
                                 <span class="invalid-feedback">{{ errors.Gender_id }}</span>
                             </div>
-
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label  class="custom-file-label" for="exampleInputFile">Choose file</label>
+                                <Field v-model="photos" name="photos[]" type="file" class="custom-file-input"
+                                       id="Image"  accept="image/*"  multiple/>
+                            </div>
                         </div>
 
 

@@ -11,6 +11,8 @@ class Image extends Model
 {
     use HasFactory;
 
+
+
     public function imageable(): MorphTo
     {
         return $this->morphTo();

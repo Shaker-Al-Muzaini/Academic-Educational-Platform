@@ -3,49 +3,62 @@
 namespace App\Http\Controllers\Das;
 
 use App\Http\Controllers\Controller;
-use App\Models\Grades;
+use App\Models\Image;
 use App\Models\Student;
-use App\Models\Teacher;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use function setting;
 
 class StudentController extends Controller
 {
 
     public function index()
     {
-        $students= Student::latest()
-            ->paginate(\setting(('pagination_limit')));
-        return$students ;
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
+        return Student::latest()
+            ->paginate(setting(('pagination_limit')));
 
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+
+
+
     public function store(Request $request)
     {
-        $validated =request()->validate(Student::rules());
+        DB::beginTransaction();
+        try {
+            $validatedData = $request->validate(Student::rules());
+            $cleanedData = collect($validatedData)->map(function ($value, $key) {
+                return is_string($value) ? trim(strip_tags($value)) : $value;
+            })->toArray();
 
-        return Student::create([
-            'email' => $validated['email'],
-            'Gender_id' => $validated['Gender_id'],
-            'name' => $validated['name'],
-            'password' => $validated['password'],
-            'address' => $validated['address'],
-            'parent_student_id' => $validated['parent_student_id'],
-            'class_room_id' => $validated['class_room_id'],
-            'grade_id' => $validated['grade_id'],
-            'section_id' => $validated['section_id'],
+            $student = Student::create($cleanedData);
 
-        ]);
+            if ($request->hasFile('photos')) {
+                $studentDirectory = "attachments/students/{$student->name}";
+                if (!Storage::exists($studentDirectory)) {
+                    Storage::makeDirectory($studentDirectory);
+                }
+
+                foreach ($request->file('photos') as $photo) {
+                    $fileName = time() . '_' . $photo->getClientOriginalName();
+                    $photo->storeAs($studentDirectory, $fileName, 'upload_attachments');
+
+                    Image::create([
+                        'filename' => $fileName,
+                        'imageable_id' => $student->id,
+                        'imageable_type' => Student::class,
+                    ]);
+                }
+            }
+            DB::commit();
+            return $student;
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['message' => 'حدث خطأ أثناء إنشاء الطالب'], 500);
+        }
     }
+
 
     /**
      * Display the specified resource.
@@ -68,20 +81,16 @@ class StudentController extends Controller
      */
     public function update(Request $request, Student $student)
     {
-        $student->update([
-            'email' => $request['email'],
-            'Gender_id' => $request['Gender_id'],
-            'name' => $request['name'],
-            'password' => $request['password'],
-            'address' => $request['address'],
-            'parent_student_id' => $request['parent_student_id'],
-            'class_room_id' => $request['class_room_id'],
-            'grade_id' => $request['grade_id'],
-            'section_id' => $request['section_id'],
-        ]);
-        return $student;
+        $validatedData = $request->validate(Student::rules());
+        $cleanedData = collect($validatedData)->map(function ($value, $key) {
+            return is_string($value) ? trim(strip_tags($value)) : $value;
+        })->toArray();
 
+        $student->update($cleanedData);
+
+        return $student;
     }
+
 
     /**
      * Remove the specified resource from storage.

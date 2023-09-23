@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 
+/**
+ * @method static create(mixed[] $cleanedData)
+ * @method static latest()
+ */
 class Student extends Model
 {
     use HasFactory;
@@ -38,15 +42,29 @@ class Student extends Model
         );
     }
 
-
+    public function genders()
+    {
+        return $this->belongsTo(gender::class, 'Gender_id');
+    }
 
     public  function sections() :BelongsTo
     {
         return $this->belongsTo(Section::class,'section_id');
     }
+    public  function grade() :BelongsTo
+    {
+        return $this->belongsTo(Grades::class,'grade_id');
+    }
 
+    public  function class_room() :BelongsTo
+    {
+        return $this->belongsTo(ClassRoom::class,'class_room_id');
+    }
 
-
+    public  function parent_student() :BelongsTo
+    {
+        return $this->belongsTo(ParentStudent::class,'parent_student_id');
+    }
 
     public function image(): MorphOne
     {
