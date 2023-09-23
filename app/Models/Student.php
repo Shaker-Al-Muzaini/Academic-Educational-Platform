@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class Student extends Model
 {
@@ -37,27 +38,18 @@ class Student extends Model
         );
     }
 
-    public function genders()
-    {
-        return $this->belongsTo(gender::class, 'Gender_id');
-    }
+
 
     public  function sections() :BelongsTo
     {
         return $this->belongsTo(Section::class,'section_id');
     }
-    public  function grade() :BelongsTo
-    {
-        return $this->belongsTo(Grades::class,'grade_id');
-    }
 
-    public  function class_room() :BelongsTo
-    {
-        return $this->belongsTo(ClassRoom::class,'class_room_id');
-    }
 
-    public  function parent_student() :BelongsTo
+
+
+    public function image(): MorphOne
     {
-        return $this->belongsTo(ParentStudent::class,'parent_student_id');
+        return $this->morphOne(Image::class, 'imageable');
     }
 }
