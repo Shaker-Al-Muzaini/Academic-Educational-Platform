@@ -192,6 +192,18 @@ const deleteStudent = (id) => {
         }
     })
 };
+const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    authUserStore.user.avatar = URL.createObjectURL(file);
+
+    const formData = new FormData();
+    formData.append('profile_picture', file);
+
+    axios.post('/api/upload-profile-image', formData)
+        .then((response) => {
+            toastr.success('Image uploaded successfully!');
+        });
+};
 
 
 
