@@ -16,6 +16,8 @@ const classRooms = ref();
 const grades = ref();
 const sections = ref();
 const ParentStudents = ref();
+const file = ref();
+const photos = ref([]);
 
 const getStudents = (page = 1) => {
     axios.get(`/api/students/?page=${page}`)
@@ -70,29 +72,65 @@ const createStudentSchema = yup.object({
     class_room_id: yup.string().required(),
     section_id: yup.string().required(),
     grade_id: yup.string().required(),
+    photos: yup.array().nullable(),
 });
 
 const createStudent = (values, { resetForm, setErrors }) => {
-    axios.post('/api/students', values)
+    const formData = new FormData();
+
+    // إضافة البيانات إلى النموذج
+    formData.append('email', values.email);
+    formData.append('Gender_id', values.Gender_id);
+    formData.append('parent_student_id', values.parent_student_id);
+    formData.append('name', values.name);
+    formData.append('password', values.password);
+    formData.append('address', values.address);
+    formData.append('class_room_id', values.class_room_id);
+    formData.append('section_id', values.section_id);
+    formData.append('grade_id', values.grade_id);
+
+    // إضافة الصور إلى النموذج
+    for (let i = 0; i < photos.value.length; i++) {
+        formData.append('photos[]', photos.value[i]);
+    }
+
+    axios.post('/api/students', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data', // تحديد نوع المحتوى كـ multipart/form-data
+        },
+    })
         .then((response) => {
-            students.value.data.unshift(response.data);
+            toastr.success('Student created successfully!');
             $('#StudentsFormModal').modal('hide');
             resetForm();
-            toastr.success('Student created successfully!');
         })
         .catch((error) => {
             setErrors(error.response.data.errors);
             console.log(error);
-        })
+        });
 };
+
+
+const onChange = (e) => {
+    photos.value.splice(0, photos.value.length); // تفريغ المصفوفة
+
+    const selectedFiles = e.target.files;
+
+    if (selectedFiles.length > 0) {
+        for (let i = 0; i < selectedFiles.length; i++) {
+            photos.value.push(selectedFiles[i]); // إضافة الصور المحددة إلى المصفوفة
+        }
+    }
+};
+
+
+
+
+
 const addStudents = () => {
     editing.value = false;
     $('#StudentsFormModal').modal('show');
 };
-
-
-
-
 
 
 //editing
@@ -141,6 +179,10 @@ const updateStudent = (values, { setErrors }) => {
 }
 const handleSubmit = (values, actions) => {
     // console.log(actions);
+    const formData = new FormData();
+    for (let i = 0; i < photos.value.length; i++) {
+        formData.append('photos[]', photos.value[i]);
+    }
     if (editing.value) {
         updateStudent(values, actions);
     } else {
@@ -192,18 +234,8 @@ const deleteStudent = (id) => {
         }
     })
 };
-const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    authUserStore.user.avatar = URL.createObjectURL(file);
 
-    const formData = new FormData();
-    formData.append('profile_picture', file);
 
-    axios.post('/api/upload-profile-image', formData)
-        .then((response) => {
-            toastr.success('Image uploaded successfully!');
-        });
-};
 
 
 
@@ -384,8 +416,8 @@ onMounted(() => {
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label  class="custom-file-label" for="exampleInputFile">Choose file</label>
-                                <Field v-model="photos" name="photos[]" type="file" class="custom-file-input"
-                                       id="Image"  accept="image/*"  multiple/>
+                                <input @change="onChange" name="photos[]" type="file" class="custom-file-input" id="Image" accept="image/*" multiple />
+
                             </div>
                         </div>
 
@@ -400,5 +432,4 @@ onMounted(() => {
         </div>
     </div>
 </template>
-
 

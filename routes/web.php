@@ -112,6 +112,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/api/students', [StudentController::class, 'store']);
     Route::put('/api/students/{student}', [StudentController::class, 'update']);
     Route::delete('/api/students/{student}', [StudentController::class, 'destroy']);
+    Route::post('/api/students/upload-image', [StudentController::class, 'uploadImages']);
+
 
 
 
