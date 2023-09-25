@@ -17,6 +17,7 @@ const grades = ref();
 const sections = ref();
 const ParentStudents = ref();
 const file = ref();
+const showStudent = ref();
 const photos = ref([]);
 
 const getStudents = (page = 1) => {
@@ -122,10 +123,6 @@ const onChange = (e) => {
         }
     }
 };
-
-
-
-
 
 const addStudents = () => {
     editing.value = false;
@@ -334,6 +331,10 @@ onMounted(() => {
                                 <a  href="#" @click.prevent="deleteStudent(student.id)">
                                     <i class="fa fa-trash text-danger ml-1"></i>
                                 </a>
+
+                                <router-link :to="{ name: 'admin.showStudent', params: { id: student.id } }">
+                                    <i class="fa fa-eye text-warning ml-1"></i>
+                                </router-link>
                             </td>
                         </tr>
                         </tbody>

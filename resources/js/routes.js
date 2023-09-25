@@ -11,6 +11,7 @@ import Sections from './pages/sections/listSections.vue'
 import Parents from './pages/parents/ListParents.vue'
 import Teacher from './pages/teachers/teacher.vue'
 import Student from './pages/students/ListStudents.vue'
+import ShowStudent from './pages/students/ShowStudent.vue'
 export default[
     {
         path: '/admin/dashboard',
@@ -90,10 +91,16 @@ export default[
         name: 'admin.teacher',
         component: Teacher,
     },
-{
+    {
         path: '/admin/student',
         name: 'admin.student',
         component: Student,
+    },
+    {
+        path: '/admin/student/show/:id',
+        name: 'admin.showStudent',
+        component: ShowStudent,
+        props: true,
     },
 
 ]
