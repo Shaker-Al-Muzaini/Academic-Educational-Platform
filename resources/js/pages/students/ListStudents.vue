@@ -145,6 +145,7 @@ const editStudentSchema = yup.object({
     class_room_id: yup.string().required(),
     section_id: yup.string().required(),
     grade_id: yup.string().required(),
+    photos: yup.array().nullable(),
 });
 
 const editStudent = (student) => {
@@ -166,17 +167,42 @@ const editStudent = (student) => {
     };
 };
 const updateStudent = (values, { setErrors }) => {
-    axios.put('/api/students/'+ formValues.value.id, values)
+    const formData = new FormData();
+
+    // إضافة البيانات إلى النموذج
+    formData.append('_method', 'PUT'); // تحديد HTTP Method كـ PUT
+    formData.append('email', values.email);
+    formData.append('Gender_id', values.Gender_id);
+    formData.append('parent_student_id', values.parent_student_id);
+    formData.append('name', values.name);
+    formData.append('password', values.password);
+    formData.append('address', values.address);
+    formData.append('class_room_id', values.class_room_id);
+    formData.append('section_id', values.section_id);
+    formData.append('grade_id', values.grade_id);
+
+    // إضافة الصور إلى النموذج
+    for (let i = 0; i < photos.value.length; i++) {
+        formData.append('photos[]', photos.value[i]);
+    }
+
+    axios.post('/api/students/' + formValues.value.id, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data', // تحديد نوع المحتوى كـ multipart/form-data
+        },
+    })
         .then((response) => {
             const index = students.value.data.findIndex(student => student.id === response.data.id);
             students.value.data[index] = response.data;
             $('#StudentsFormModal').modal('hide');
-            toastr.success('student updated successfully!');
-        }).catch((error) => {
-        setErrors(error.response.data.errors);
-        console.log(error);
-    });
-}
+            toastr.success('Student updated successfully!');
+        })
+        .catch((error) => {
+            setErrors(error.response.data.errors);
+            console.log(error);
+        });
+};
+
 const handleSubmit = (values, actions) => {
     // console.log(actions);
     const formData = new FormData();
