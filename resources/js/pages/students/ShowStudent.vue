@@ -20,7 +20,5 @@ onMounted(() => {
 
 <template>
     <h1 class="bg-center bg-info text-bold text-white m-4">{{$route.params.id}}</h1>
-    <h1 class="bg-center bg-info text-bold text-white m-4">{{$route.params.id}}</h1>
-    <h1 class="bg-center bg-info text-bold text-white m-4">{{$route.params.id}}</h1>
 </template>
 
