@@ -16,7 +16,7 @@ const getAppointmentsCount = () => {
 };
 
 const selectedDateRange = ref('today');
-const totalUsersCount = ref(0);
+const totalUsersCount = ref('0');
 
 const getUsersCount = () => {
     axios.get('/api/stats/users', {
