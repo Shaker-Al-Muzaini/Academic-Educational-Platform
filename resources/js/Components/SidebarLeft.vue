@@ -52,12 +52,13 @@ const logout = () => {
 
                             </p>
                         </a>
+<!--                        //explanations  -->
                         <ul class="nav  nav-tabs-right ">
                             <li class="nav-item">
-                                <router-link to="/admin/dashboard" active-class="active" class="nav-link">
+                                <router-link to="/admin/explanations" active-class="active" class="nav-link">
                                     <i class="nav-icon fas fa-tachometer-alt"></i>
                                     <p>
-                                        Home
+                                        Explanations
                                     </p>
                                 </router-link>
 
@@ -151,6 +152,7 @@ const logout = () => {
                             </li>
 
                         </ul>
+<!--                        //explanations -->
                     </li>
 
                     <li class="nav-item">

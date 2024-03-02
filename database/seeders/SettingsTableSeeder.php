@@ -17,7 +17,7 @@ class SettingsTableSeeder extends Seeder
         DB::table('settings')->insert([
             [
                 'key' => 'app_name',
-                'value' => 'Test App',
+                'value' => 'explanations App',
             ],
             [
                 'key' => 'date_format',

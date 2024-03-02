@@ -12,6 +12,7 @@ import Parents from './pages/parents/ListParents.vue'
 import Teacher from './pages/teachers/teacher.vue'
 import Student from './pages/students/ListStudents.vue'
 import ShowStudent from './pages/students/ShowStudent.vue'
+import Explanations from './pages/explanations/ts.vue'
 export default[
     {
         path: '/admin/dashboard',
@@ -102,5 +103,13 @@ export default[
         component: ShowStudent,
         props: true,
     },
+    {
+        path: '/admin/explanations',
+        name: 'admin.explanations',
+        component:Explanations,
+
+    },
+
+
 
 ]
