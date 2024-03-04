@@ -12,12 +12,23 @@ const editing = ref(false);
 const grades = ref();
 const class_rooms = ref();
 const Teachers = ref();
+const explanations =  ref({'data': []});
+
+
+const getExplanation = (page = 1) => {
+    axios.get(`/api/explanations/?page=${page}`)
+        .then((response) => {
+            explanations.value = response.data;
+        })
+};
 
 
 const addExplanations = () => {
     editing.value = false;
     $('#ExplanationFormModal').modal('show');
 };
+
+
 // Craeteting
 const createSchema = yup.object({
     name: yup.string().required(),
@@ -102,6 +113,7 @@ const updateExplanation = (values, { setErrors }) => {
 onMounted(() => {
     getGrade();
     getClass_room();
+    getExplanation();
     getTeacher();
 });
 </script>
@@ -144,27 +156,20 @@ onMounted(() => {
                                 <tr>
                                     <th scope="col">#</th>
                                     <th scope="col">Explanations Name</th>
-                                    <th scope="col">Grade</th>
-                                    <th scope="col">ClassRoom</th>
-                                    <th scope="col">Teacher</th>
-                                    <th scope="col">Class time</th>
-                                    <th scope="col">Notes</th>
+<!--                                    <th scope="col">Grade</th>-->
+<!--                                    <th scope="col">ClassRoom</th>-->
+<!--                                    <th scope="col">Teacher</th>-->
+<!--                                    <th scope="col">Class time</th>-->
+<!--                                    <th scope="col">Notes</th>-->
                                     <th scope="col">Options</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-<!--                                v-for="(grade, index) in grades.data" :key="grade.id"-->
-                                <tr>
-<!--                                    <td>{{ index + 1 }}</td>-->
-<!--                                    <td>{{ grade.name }}</td>-->
-<!--                                    <td>{{ grade.notes }}</td>-->
-                                    <td>1</td>
-                                    <td>حصه  عربي </td>
-                                    <td>المرحلة آلإعدادية</td>
-                                    <td>الصف الاول</td>
-                                    <td>محمد احمد </td>
-                                    <td>36 دقية </td>
-                                    <td>لا  يوجد  اي ملحوظات </td>
+
+                                <tr v-for="(explanation, index) in explanations.data" :key="explanation.id" >
+                                    <td>{{ index + 1 }}</td>
+                                    <td>{{explanation.name }}</td>
+                                    <td>{{explanation.notes }}</td>
                                     <td>
 <!--                                        @click.prevent="editGgrad(grade)"-->
                                         <a  href="#" ><i class="fa fa-edit mr-1"></i></a>
@@ -177,7 +182,7 @@ onMounted(() => {
                                 </tr>
                                 </tbody>
                             </table>
-<!--                            <Bootstrap4Pagination :data="grades" @pagination-change-page="getGrades" />-->
+                            <Bootstrap4Pagination :data="explanations" @pagination-change-page="getExplanation" />
                         </div>
 
                     </div>

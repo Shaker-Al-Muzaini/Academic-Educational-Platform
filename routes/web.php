@@ -5,6 +5,7 @@ use App\Http\Controllers\Das\AppControoler;
 use App\Http\Controllers\Das\AppointmentController;
 use App\Http\Controllers\Das\ClassRoomController;
 use App\Http\Controllers\Das\ClientController;
+use App\Http\Controllers\Das\ExplanationController;
 use App\Http\Controllers\Das\GradesController;
 use App\Http\Controllers\Das\ParentStudentController;
 use App\Http\Controllers\Das\ProfileController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\Das\SettingController;
 use App\Http\Controllers\Das\StudentController;
 use App\Http\Controllers\Das\TeacherController;
 use App\Http\Controllers\Das\UserController;
+use App\Models\Explanation;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -115,6 +117,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/api/showStudent/{student}', [StudentController::class, 'show']);
 
 
+
+//    Explanation
+    Route::get('/api/explanations', [ExplanationController::class, 'index']);
 
 
 
