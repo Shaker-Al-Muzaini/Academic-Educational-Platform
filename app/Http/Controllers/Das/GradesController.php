@@ -30,7 +30,7 @@ class GradesController extends Controller
      */
     public function create()
     {
-        //
+
     }
 
     /**
