@@ -120,6 +120,7 @@ Route::middleware('auth')->group(function () {
 
 //    Explanation
     Route::get('/api/explanations', [ExplanationController::class, 'index']);
+    Route::post('/api/explanations', [ExplanationController::class, 'store']);
 
 
 

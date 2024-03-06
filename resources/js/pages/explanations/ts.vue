@@ -23,10 +23,27 @@ const getExplanation = (page = 1) => {
 };
 
 
+
 const addExplanations = () => {
     editing.value = false;
     $('#ExplanationFormModal').modal('show');
 };
+
+const getGradeName = (gradeId) => {
+    const grade = grades.value.find(grade => grade.id === gradeId);
+    return grade ? grade.name : 'gradeNmae';
+}
+const getclassRoomsNmae = (classRoomId) => {
+    const classRoom = class_rooms.value.find(classRoom => classRoom.id === classRoomId);
+    return classRoom ? classRoom.name_class : 'classRoomNmae';
+}
+
+const getTeacherNmae = (TeacherId) => {
+    const Teacher = Teachers.value.find(Teacher => Teacher.id === TeacherId);
+    return Teacher ? Teacher.name : 'TeacherIdNmae';
+}
+
+
 
 
 // Craeteting
@@ -35,14 +52,15 @@ const createSchema = yup.object({
     grade_id: yup.string().required(),
     class_room_id: yup.string().required(),
     teacher_id: yup.string().required(),
+    notes: yup.string()
 });
 
 const create = (values, { resetForm, setErrors }) => {
     axios.post('/api/createSections', values)
         .then((response) => {
             const gradeId = response.data.grade_id;
-            const sectionToAdd = response.data;
-
+            const class_room_id = response.data.class_room_id;
+            const teacher_id = response.data.teacher_id;
 
             const gradeIndex = grades.value.data.findIndex(grade => grade.id === gradeId);
 
@@ -156,26 +174,26 @@ onMounted(() => {
                                 <tr>
                                     <th scope="col">#</th>
                                     <th scope="col">Explanations Name</th>
-<!--                                    <th scope="col">Grade</th>-->
-<!--                                    <th scope="col">ClassRoom</th>-->
-<!--                                    <th scope="col">Teacher</th>-->
-<!--                                    <th scope="col">Class time</th>-->
-<!--                                    <th scope="col">Notes</th>-->
+                                    <th scope="col">Grade</th>
+                                    <th scope="col">ClassRoom</th>
+                                    <th scope="col">Teacher</th>
+                                    <th scope="col">Notes</th>
                                     <th scope="col">Options</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-
-                                <tr v-for="(explanation, index) in explanations.data" :key="explanation.id" >
+                                <tr v-for="(explanation, index) in explanations.data" :key="explanation.id">
                                     <td>{{ index + 1 }}</td>
-                                    <td>{{explanation.name }}</td>
-                                    <td>{{explanation.notes }}</td>
-                                    <td>
-<!--                                        @click.prevent="editGgrad(grade)"-->
-                                        <a  href="#" ><i class="fa fa-edit mr-1"></i></a>
-<!--                                        @click.prevent="deletegrades(grade.id)"-->
+                                    <td>{{ explanation.name }}</td>
+                                    <td>{{ getGradeName(explanation.grade_id) }}</td>
+                                    <td>{{ getclassRoomsNmae(explanation.class_room_id) }}</td>
+                                    <td>{{ getTeacherNmae(explanation.teacher_id) }}</td>
+                                    <td>{{ explanation.notes }}</td>
 
-                                        <a  href="#" >
+                                    <td>
+                                        <a  href="#" @click.prevent="editGgrad(grade)"><i class="fa fa-edit mr-1"></i></a>
+
+                                        <a  href="#" @click.prevent="deletegrades(grade.id)">
                                             <i class="fa fa-trash text-danger ml-1"></i>
                                         </a>
                                     </td>
@@ -203,7 +221,7 @@ onMounted(() => {
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <Form ref="form" @submit="handleSubmit" :validation-schema="editing ? editExplanation : createClassRoomSchema"
+                <Form ref="form" @submit="handleSubmit" :validation-schema="editing ? editExplanation : createSchema"
                       v-slot="{ errors }" :initial-values="formValues">
                     <div class="modal-body">
                         <div class="form-group">
