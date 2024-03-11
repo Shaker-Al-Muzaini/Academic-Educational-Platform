@@ -121,6 +121,9 @@ Route::middleware('auth')->group(function () {
 //    Explanation
     Route::get('/api/explanations', [ExplanationController::class, 'index']);
     Route::post('/api/explanations', [ExplanationController::class, 'store']);
+    Route::put('/api/explanations/{explanation}', [ExplanationController::class, 'update']);
+    Route::delete('/api/explanations/{explanation}', [ExplanationController::class, 'destroy']);
+
 
 
 

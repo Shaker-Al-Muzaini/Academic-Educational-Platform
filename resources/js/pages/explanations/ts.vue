@@ -4,6 +4,7 @@ import { Form, Field } from 'vee-validate';
 import Swal from 'sweetalert2';
 import { Bootstrap4Pagination } from 'laravel-vue-pagination';
 import * as yup from 'yup';
+const formValues = ref();
 import axios from 'axios';
 import { useToastr } from '../../toastr.js';
 const toastr = useToastr();
@@ -39,9 +40,16 @@ const getclassRoomsNmae = (classRoomId) => {
 }
 
 const getTeacherNmae = (TeacherId) => {
-    const Teacher = Teachers.value.find(Teacher => Teacher.id === TeacherId);
-    return Teacher ? Teacher.name : 'TeacherIdNmae';
+    // التحقق من أن المتغير Teachers معرف وليس فارغاً
+    if (Teachers && Teachers.value && Teachers.value.length > 0) {
+        const Teacher = Teachers.value.find(Teacher => Teacher.id === TeacherId);
+        return Teacher ? Teacher.name : 'TeacherIdNmae';
+    } else {
+        // في حالة عدم تعريف Teachers أو كونه فارغاً
+        return 'Teachers list is empty or undefined';
+    }
 }
+
 
 
 
@@ -56,26 +64,29 @@ const createSchema = yup.object({
 });
 
 const create = (values, { resetForm, setErrors }) => {
-    axios.post('/api/createSections', values)
+    const formData = new FormData();
+    formData.append('name', values.name);
+    formData.append('notes', values.notes);
+    formData.append('grade_id', values.grade_id);
+    formData.append('class_room_id', values.class_room_id);
+    formData.append('teacher_id', values.teacher_id);
+    axios.post('/api/explanations', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data', // تحديد نوع المحتوى كـ multipart/form-data
+        },
+    })
+
+
         .then((response) => {
-            const gradeId = response.data.grade_id;
-            const class_room_id = response.data.class_room_id;
-            const teacher_id = response.data.teacher_id;
-
-            const gradeIndex = grades.value.data.findIndex(grade => grade.id === gradeId);
-
-            if (gradeIndex !== -1) {
-                grades.value.data[gradeIndex].sections.unshift(sectionToAdd);
-            }
-            $('#FormModal').modal('hide');
+            toastr.success('Explanation created successfully!');
+            $('#ExplanationFormModal').modal('hide');
             resetForm();
-            toastr.success('Sections created successfully!');
+
+            // إعادة جلب البيانات بعد الإنشاء لتحديث الجدول
+            getExplanation();
         })
-        .catch((error) => {
-            if (error.response.errors) {
-                setErrors(error.response.errors);
-            }
-        });
+
+
 };
 
 
@@ -98,30 +109,81 @@ const getTeacher = () => {
             Teachers.value = response.data;
         })
 };
+const handleSubmit = (values, actions) => {
+    // console.log(actions);
+    const formData = new FormData();
+    if (editing.value) {
+        updateExplanation(values, actions);
+    } else {
+        create(values, actions);
+    }
+}
 
-
-const editExplanation = (classRoom) => {
+const editExplanation = (explanation) => {
     editing.value = true;
     form.value.resetForm();
     $('#ExplanationFormModal').modal('show');
     formValues.value = {
-        id: classRoom.id,
-        name_class: classRoom.name_class,
-        grade_id: classRoom.grade_id,
+        id: explanation.id,
+        name: explanation.name,
+        notes: explanation.notes,
+        grade_id: explanation.grade_id,
+        class_room_id: explanation.class_room_id,
+        teacher_id: explanation.teacher_id,
     };
 };
+
 const updateExplanation = (values, { setErrors }) => {
-    axios.put('/api/classRooms/'+ formValues.value.id, values)
+    const formData = new FormData();
+
+    // إضافة البيانات إلى النموذج
+    formData.append('_method', 'PUT'); // تحديد HTTP Method كـ PUT
+    formData.append('name', values.name);
+    formData.append('notes', values.notes);
+    formData.append('teacher_id', values.teacher_id);
+    formData.append('class_room_id', values.class_room_id);
+    formData.append('grade_id', values.grade_id);
+
+
+    axios.post('/api/explanations/' + formValues.value.id, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data', // تحديد نوع المحتوى كـ multipart/form-data
+        },
+    })
         .then((response) => {
-            const index = classRooms.value.data.findIndex(classRoom => classRoom.id === response.data.id);
-            classRooms.value.data[index] = response.data;
-            $('#classRoomsFormModal').modal('hide');
-            toastr.success('ClassRoom updated successfully!');
-        }).catch((error) => {
-        setErrors(error.response.data.errors);
-        console.log(error);
-    });
-}
+            const index = explanations.value.data.findIndex(explanation => explanation.id === response.data.id);
+            explanations.value.data[index] = response.data;
+            $('#ExplanationFormModal').modal('hide');
+            toastr.success('ExplanationFormModal updated successfully!');
+        })
+        .catch((error) => {
+            setErrors(error.response.data.errors);
+            console.log(error);
+        });
+};
+const deleteExplanation= (id) => {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            axios.delete(`/api/explanations/${id}`)
+                .then((response) => {
+                    explanations.value.data = explanations.value.data.filter(explanation => explanation.id !== id);
+                    Swal.fire(
+                        'Deleted!',
+                        'Your file has been deleted.',
+                        'success'
+                    )
+                });
+        }
+    })
+};
 
 
 
@@ -191,9 +253,9 @@ onMounted(() => {
                                     <td>{{ explanation.notes }}</td>
 
                                     <td>
-                                        <a  href="#" @click.prevent="editGgrad(grade)"><i class="fa fa-edit mr-1"></i></a>
+                                        <a  href="#" @click.prevent="editExplanation(explanation)"><i class="fa fa-edit mr-1"></i></a>
 
-                                        <a  href="#" @click.prevent="deletegrades(grade.id)">
+                                        <a  href="#" @click.prevent="deleteExplanation(explanation.id)">
                                             <i class="fa fa-trash text-danger ml-1"></i>
                                         </a>
                                     </td>
@@ -221,7 +283,7 @@ onMounted(() => {
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <Form ref="form" @submit="handleSubmit" :validation-schema="editing ? editExplanation : createSchema"
+                <Form ref="form"  enctype="multipart/form-data" @submit="handleSubmit" :validation-schema="editing ? editExplanation : createSchema"
                       v-slot="{ errors }" :initial-values="formValues">
                     <div class="modal-body">
                         <div class="form-group">
@@ -233,7 +295,7 @@ onMounted(() => {
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="email">Grade Name</label>
+                                    <label for="grade_id">Grade Name</label>
                                     <Field name="grade_id" as="select" class="form-control" :class="{ 'is-invalid': errors.grade_id }"
                                            id="grade_id">
                                         <option v-for="grade in grades" :value="grade.id" :key="grade.id">{{grade.name}}</option>
@@ -244,7 +306,7 @@ onMounted(() => {
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="email">classRoom Name</label>
+                                    <label for="class_room_id">classRoom Name</label>
                                     <Field name="class_room_id" as="select" class="form-control" :class="{ 'is-invalid': errors.class_room_id }"
                                            id="class_room_id">
                                         <option v-for="class_room in class_rooms" :value="class_room.id" :key="class_room.id">{{class_room.name_class}}</option>
