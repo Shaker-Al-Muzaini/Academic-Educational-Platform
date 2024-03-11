@@ -1,16 +1,15 @@
 <?php
 
 namespace App\Http\Controllers\Das;
-
 use App\Http\Controllers\Controller;
-use App\Models\ClassRoom;
 use App\Models\Explanation;
-use App\Models\Grades;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
+
 class ExplanationController extends Controller
 {
+
     public function index()
     {
 
@@ -41,33 +40,33 @@ class ExplanationController extends Controller
             return response()->json(['message' => 'حدث خطأ أثناء إنشاء '], 500);
         }
     }
-    public function update(Request $request, Explanation $explanations)
+    public function update(Request $request,Explanation $explanation)
     {
-        DB::beginTransaction();
-        try {
-            request()->validate([
-                'name' => 'required',
-                'grade_id' => 'required',
-                'class_room_id' => 'required',
-                'teacher_id' => 'required',
-                'notes' => 'string',
+//        DB::beginTransaction();
+//        try {
+            $validatedData = $request->validate(Explanation::rules());
+            dd($validatedData);
+            $cleanedData = collect($validatedData)->map(function ($value, $key) {
+                return is_string($value) ? trim(strip_tags($value)):$value;
+            })->toArray();
 
-            ]);
-            $explanations->update([
-                'name' => request('name'),
-                'class_room_id' => request('class_room_id'),
-                'teacher_id' => request('teacher_id'),
-                'grade_id' => request('grade_id'),
-                'notes' => request('notes'),
-            ]);
-
-
-            DB::commit();
-            return $explanations;
-        } catch (\Exception $e) {
-            DB::rollback();
-            return response()->json(['message' => 'حدث خطأ أثناء تحديث الطالب'], 500);
-        }
+            $explanation->update($cleanedData);
+//            $request->validate(Explanation::rules());
+//        $explanation->update([
+//            'name' => $request['name'],
+//            'notes' => $request['notes'],
+//            'grade_id' => $request['grade_id'],
+//            'class_room_id' => $request['class_room_id'],
+//            'teacher_id' => $request['teacher_id'],
+//
+//        ]);
+        return $explanation;
+//            DB::commit();
+//            return $explanation;
+//        } catch (\Exception $e) {
+//            DB::rollback();
+//            return response()->json(['message' => 'حدث خطأ أثناء تحديث '], 500);
+//        }
     }
 
     public function destroy(Explanation $explanation)

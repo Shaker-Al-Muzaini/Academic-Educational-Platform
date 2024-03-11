@@ -62,6 +62,13 @@ const createSchema = yup.object({
     teacher_id: yup.string().required(),
     notes: yup.string()
 });
+const editSchema = yup.object({
+    name: yup.string().required(),
+    grade_id: yup.string().required(),
+    class_room_id: yup.string().required(),
+    teacher_id: yup.string().required(),
+    notes: yup.string()
+});
 
 const create = (values, { resetForm, setErrors }) => {
     const formData = new FormData();
@@ -135,7 +142,6 @@ const editExplanation = (explanation) => {
 
 const updateExplanation = (values, { setErrors }) => {
     const formData = new FormData();
-
     // إضافة البيانات إلى النموذج
     formData.append('_method', 'PUT'); // تحديد HTTP Method كـ PUT
     formData.append('name', values.name);
@@ -283,7 +289,7 @@ onMounted(() => {
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <Form ref="form"  enctype="multipart/form-data" @submit="handleSubmit" :validation-schema="editing ? editExplanation : createSchema"
+                <Form ref="form"  enctype="multipart/form-data" @submit="handleSubmit" :validation-schema="editing ? editSchema : createSchema"
                       v-slot="{ errors }" :initial-values="formValues">
                     <div class="modal-body">
                         <div class="form-group">

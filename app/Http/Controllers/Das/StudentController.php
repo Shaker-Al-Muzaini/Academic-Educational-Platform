@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers\Das;
-
 use App\Http\Controllers\Controller;
 use App\Models\Image;
 use App\Models\Student;

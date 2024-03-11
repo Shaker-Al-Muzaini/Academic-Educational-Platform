@@ -21,7 +21,7 @@ class Explanation extends Model
             'class_room_id' => ['required',],
             'grade_id' => ['required',],
             'teacher_id' => ['required',],
-            'notes' => ['string',],
+            'notes' => ['string',]
         ]
         );
     }
